@@ -23,7 +23,7 @@ class Image_yecai(object):
     def __init__(self, windowLeftUp):
         self.tessdata_dir_config = '--tessdata-dir "c://Program Files (x86)//Tesseract-OCR//tessdata"'
         self.ocr = CnOcr()
-        self.ocr_num = CnOcr(cand_alphabet=[str(x)for x in range(10)] + ['+', '=', '?'])
+        self.ocr_num = CnOcr(cand_alphabet=[str(x)for x in range(10)] + ['+', '=', '?', '/'])
         """Location"""
         self.windowLeftUp = windowLeftUp
         self.verifyLeftUp = (490, 237)
@@ -34,6 +34,9 @@ class Image_yecai(object):
         self.fishLocation = (706 , 310, 14, 75)
         self.fishFlagLocation = (232, 146, 309-232, 174-146)
         self.backgroundLocation = (0,0,1280,750)
+        #HP
+        self.hpLocation = (748, 722, 876 - 748, 724 - 722)
+        self.hpThreshold = 20
         """Query Image"""
         #verify
         self.verification_img = readimg('img/verify/verification.png')
@@ -141,7 +144,7 @@ class Image_yecai(object):
         inner = 0 if in_h < 0 or in_w < 0 else in_h * in_w
         union = (box1[2] - box1[0]) * (box1[3] - box1[1]) + \
                 (box2[2] - box2[0]) * (box2[3] - box2[1]) - inner
-        print(inner)
+        # print(inner)
         iou = inner / union
         return iou
 
@@ -169,7 +172,7 @@ class Image_yecai(object):
             ans.append(i)
             for j in range(len(ans) - 1):
                 iou_value = self.iou(i, ans[j])
-                print(iou_value)
+                # print(iou_value)
                 if iou_value >= 0.2:
                     ans.pop()
                     break
@@ -308,7 +311,7 @@ class Image_yecai(object):
         ret = self.ocr.ocr(img)
         for i in ret[0][0]:
             if i in '停止垂钓':
-                print("保持钓鱼状态")
+                # print("保持钓鱼状态")
                 return False
         return True
 
@@ -326,6 +329,17 @@ class Image_yecai(object):
             ret.append((x + w // 2, max(1, y - 80)))
             # cv2.circle(img,(x+w//2,max(1,y-50)),4,(255,0,0),4)
         return ret
+
+    def checkHP(self):
+        img = self.shoot(*self.hpLocation)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        img = np.mean(img, axis=0)
+        length = img.shape[0]
+        for i in range(length):
+            if img[i] <= self.hpThreshold:
+                return i/length
+        return 1
+
 
     def smearDetect(self, img, areaThreshold=4000):
         # img = ~img

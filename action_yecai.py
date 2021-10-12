@@ -145,6 +145,9 @@ class Action_yecai(object):
             pyautogui.click()
         time.sleep(0.2)
 
+    def press(self, location):
+        pyautogui.press(location)
+
     def move(self, location, timeTake, relo=True):
         location = self.reLo(location) if relo else location
         pyautogui.moveTo(location)

@@ -100,6 +100,11 @@ class AntYecai(object):
             print("Click to start fish")
             self.action.fishflag()
 
+    def transfer(self, key='F2'):
+        hp = self.image.checkHP()
+        if hp > 0.8:
+            self.action.press(key)
+
     def hunt(self):
         ret = self.image.checkMonster()
         if len(ret) > 0:
@@ -210,7 +215,7 @@ class AntYecai(object):
     def start(self, mode= 0):
         workmode = [
             [(self.fishflag, 30), (self.fish, 0)],
-            [(self.hunt, 0)],
+            [(self.hunt, 0.5), (self.transfer, 20)],
             [(self.dig, 0)],
             [(self.eat, 0)],
             [(self.earn, 0)]][mode]
@@ -231,7 +236,7 @@ if __name__ == '__main__':
     time.sleep(2)
     program = AntYecai()
     program.mouseLocation()
-    # time.sleep(2)
+
     print(
         """
     Work Mode:
