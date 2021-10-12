@@ -37,6 +37,9 @@ class Image_yecai(object):
         #HP
         self.hpLocation = (748, 722, 876 - 748, 724 - 722)
         self.hpThreshold = 20
+        #hunting
+        self.pre_location = None
+
         """Query Image"""
         #verify
         self.verification_img = readimg('img/verify/verification.png')
@@ -325,10 +328,23 @@ class Image_yecai(object):
             x, y, w, h = cv2.boundingRect(contour)
             if not (60 <= w <= 80 and 5 <= h <= 10):
                 continue
-            # cv2.rectangle(img, (x,y), (x+w,y+h), (255,0,0), 2)
             ret.append((x + w // 2, max(1, y - 80)))
-            # cv2.circle(img,(x+w//2,max(1,y-50)),4,(255,0,0),4)
-        return ret
+
+        if self.pre_location == None:
+            if len(ret) > 0:
+                return ret[0]
+            return None
+
+        next_location = None
+        min_distance_2 = 1280 * 1280
+        for x,y in ret:
+            cur_distance_2 = (x - self.pre_location[0])**2 + (y - self.pre_location[1])**2
+            if cur_distance_2 <= min_distance_2:
+                min_distance_2 = cur_distance_2
+                next_location = (x,y)
+
+        self.pre_location = next_location
+        return next_location
 
     def checkHP(self):
         img = self.shoot(*self.hpLocation)

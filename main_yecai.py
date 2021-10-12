@@ -42,12 +42,14 @@ class AntYecai(object):
         self.forbinpoint = []
         #earn
         self.room_count = 0
+        #hunting
+
 
     def verify(self):
         self.action.reset()
         situation, data = self.image.verify()
         if situation != 0:
-            print(time.strftime("%H:%M", time.localtime()), self.verify_siuation[situation])
+            print(time.strftime("%H:%M%S", time.localtime()), self.verify_siuation[situation])
         if situation == 0:
             return True
         self.fish_verify = True
@@ -107,8 +109,9 @@ class AntYecai(object):
 
     def hunt(self):
         ret = self.image.checkMonster()
-        if len(ret) > 0:
-            self.action.click(ret[0],right=False)
+        if ret != None:
+            self.action.click(ret,right=False)
+
 
     def dig(self):
         for i in range(12):
