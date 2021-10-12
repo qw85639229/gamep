@@ -49,7 +49,7 @@ class AntYecai(object):
         self.action.reset()
         situation, data = self.image.verify()
         if situation != 0:
-            print(time.strftime("%H:%M%S", time.localtime()), self.verify_siuation[situation])
+            print(time.strftime("%H:%M:%S", time.localtime()), self.verify_siuation[situation])
         if situation == 0:
             return True
         self.fish_verify = True
