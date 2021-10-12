@@ -9,12 +9,14 @@ def test1():
         time.sleep(5)
 
 def test2():
-    for i in range(5):
+    for i in range(250):
         lock.acquire()
-        print('test2: ', time.strftime("%H:%M:%S", time.localtime()))
+        y = 1 + 623
+        time.sleep(0.1)
+        # print('test2: ', time.strftime("%H:%M:%S", time.localtime()))
         lock.release()
-        time.sleep(2)
-
+        # time.sleep(2)
+        # time.sleep(0.1)
 if __name__ == '__main__':
     print('Start: ', time.strftime("%H:%M:%S", time.localtime()))
     a = threading.Thread(target=test1)

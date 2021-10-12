@@ -493,12 +493,18 @@ class Image_yecai(object):
         return None
 
 if __name__ == "__main__":
-    img1 = cv2.imread('img/test6.png')
-    img2 = cv2.imread('img/food_lushui.png')
-    # img2 = None
-    ret = aircv.find_all_template(img1, img2, threshold=0.8)
-    cv2.circle(img1,tuple(map(int,ret[1]['result'])),2,(255,0,0),2)
-    cv2.imshow('r',img1)
-    cv2.waitKey()
-    print(ret)
+    img = cv2.imread('img/test/test8.png')
 
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    binary = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 21, 1)
+    contours, hierarchy = cv2.findContours(binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    ret = (80, 0, 0, 0)
+    for contour in contours:
+        x, y, w, h = cv2.boundingRect(contour)
+        if not 40 * 40 <= w * h <= 70 * 70 or not abs(w - h) <= 5:
+            continue
+        if x > ret[0]:
+            ret = (x, y, w, h)
+    cv2.circle(img,(ret[0],ret[1]),4,(255,0,0),4)
+    cv2.imshow('r',img)
+    cv2.waitKey()

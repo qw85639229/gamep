@@ -43,7 +43,8 @@ class AntYecai(object):
         #earn
         self.room_count = 0
         #hunting
-
+        #dig
+        self.dig_count = 0
 
     def verify(self):
         self.action.reset()
@@ -114,8 +115,13 @@ class AntYecai(object):
 
 
     def dig(self):
-        for i in range(12):
-            self.action.dig(i)
+        right_signal = False
+        if self.dig_count >= 6:
+            right_signal = True
+        self.action.dig(right_signal)
+        self.dig_count += 1
+        if self.dig_count >= 12:
+            self.dig_count = 0
 
     def checkdiv(self):
         divret = self.image.div(6)
@@ -219,7 +225,7 @@ class AntYecai(object):
         workmode = [
             [(self.fishflag, 30), (self.fish, 0)],
             [(self.hunt, 0.5), (self.transfer, 20)],
-            [(self.dig, 0)],
+            [(self.dig, 4)],
             [(self.eat, 0)],
             [(self.earn, 0)]][mode]
 
@@ -237,7 +243,7 @@ class AntYecai(object):
 if __name__ == '__main__':
     print('*' * 20)
     time.sleep(2)
-    program = AntYecai()
+    program = AntYecai(test=True)
     program.mouseLocation()
 
     print(
@@ -250,7 +256,11 @@ if __name__ == '__main__':
     4: Earning
     """
     )
-    program.start(1)
+    program.start(2)
+
+
+
+
 
     # rubbish
     # program = AntYecai(test=True)

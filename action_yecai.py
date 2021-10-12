@@ -119,20 +119,20 @@ class Action_yecai(object):
         pyautogui.moveTo(self.reLo((100,100)))
         time.sleep(0.2)
 
-    def dig(self,count):
+    def dig(self,right=False):
         leftLocation = self.reLo(self.leftLocation)
         rightLocation = self.reLo(self.rightLocation)
-        if count // 6 % 2 == 1:
+        if right:
             action = rightLocation
         else:
             action = leftLocation
 
         pyautogui.moveTo(*action)
-        time.sleep(0.1)
+        time.sleep(0.05)
         pyautogui.click()
-        time.sleep(0.1)
+        time.sleep(0.05)
         pyautogui.rightClick()
-        time.sleep(self.timeTake)
+        # time.sleep(self.timeTake)
 
     def click(self, location, right=False, relo=True):
         if relo:
