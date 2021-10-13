@@ -262,6 +262,7 @@ if __name__ == '__main__':
     2: Diging
     3: Eating with hunting
     4: Earning
+    5: Earn Snow with North
     """
     )
     program.start(2)

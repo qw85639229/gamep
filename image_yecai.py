@@ -123,12 +123,18 @@ class Image_yecai(object):
         ret = aircv.find_all_template(img, self.enter_img)
         ret2 = aircv.find_all_template(img, self.blank_img)
         if len(ret) > 0 and len(ret2) > 0:
-            return 2, self.wordMath(ret[0]['result'], ret2[0]['result'])
+            (max_math_num, enterLocation, blankLocation) = self.wordMath(ret[0]['result'], ret2[0]['result'])
+            if max_math_num == -1:
+                return 0, None
+            return 2, (max_math_num, enterLocation, blankLocation)
 
         """3: Enter A Word Sim Han"""
         ret2 = aircv.find_all_template(img, self.blank_han_img)
         if len(ret) > 0 and len(ret2) > 0:
-            return 3, self.wordHan(ret[0]['result'], ret2[0]['result'])
+            (max_han_word, enterLocation, blankLocation) = self.wordHan(ret[0]['result'], ret2[0]['result'])
+            if max_han_word == -1:
+                return 0, None
+            return 3, (max_han_word, enterLocation, blankLocation)
 
         """4: Right Arrow"""
         ret = aircv.find_all_template(img, self.right_arrow_img)
