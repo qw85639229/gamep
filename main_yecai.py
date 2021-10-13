@@ -4,6 +4,12 @@ import time
 import threading as th
 from action_yecai import Action_yecai
 from image_yecai import Image_yecai
+ifDebug = True
+
+def print_dug(words):
+    if ifDebug == True:
+        print(words)
+
 
 class AntYecai(object):
     def __init__(self, name= 'AntYecai', test=False):
@@ -215,6 +221,86 @@ class AntYecai(object):
             self.lock_verify.release()
             self.room_count += 1
 
+    def findGetFoodRubbish(self, food=True, rubbish=True, timeTake=3):
+        food_rubbish_locations = self.image.checkFoodRubbish(food=food, rubbish=rubbish)
+        for location in food_rubbish_locations:
+            self.action.move(location, 0.05)
+            handtype = self.image.checkMouse(location)
+            if handtype != 0:
+                # print("Error with hand type: ", handtype)
+                continue
+            self.lock_verify.acquire()
+            self.action.click(location)
+            self.lock_verify.release()
+            time.sleep(timeTake)
+        return
+
+    def earnSnowNorth(self):
+        roomtype = self.image.checkBackGround()
+        roomType = ['start', 'new', 'hunt', 'hometown', 'room','snow2','snow3','snow4','snow5']
+        print_dug(f'Find Room Type: {roomType[roomtype]}')
+        if roomtype >= 4:
+            print_dug("There is Room and quit")
+            self.lock_verify.acquire()
+            self.action.click(self.action.quitLocation)
+            self.lock_verify.release()
+            return
+        elif roomtype == 1:
+            self.action.drag(self.action.stripStartDrag, self.action.stripEndDrag)
+            circles = self.image.checkRoomCaomei()
+            print_dug(f'There is HomeTown and find {len(circles)} circles')
+            if len(circles) <= 0:
+                print_dug("NO circles")
+                return
+            if self.room_count >= len(circles):
+                self.room_count = 0
+            # enter the room
+            print_dug(f'Enter the room {self.room_count}')
+            self.action.click(circles[self.room_count])
+            time.sleep(0.5)
+            self.action.enterRoomPassword('110119')
+            self.action.reset()
+            time.sleep(2)
+
+            roomtype = self.image.checkBackGround()
+            if roomtype != 4:
+                self.room_count += 1
+                print_dug('Fail to enter the room')
+                ret = self.image.checkNotice()
+                if ret != None:
+                    print_dug("Find Notice")
+                    self.action.click(ret)
+                return
+
+            # Snow areas has 5 area
+            # now we are in the first one
+            # food_rubbish_locations = self.image.checkFoodRubbish(food=True, rubbish=True)
+            # successfully enter the room
+            # check food and rubbish
+            self.findGetFoodRubbish()
+            for i in range(4):
+                self.action.leaveSnow(i, self.lock_verify)
+                self.action.reset()
+                success_flag = False
+                for j in range(5):
+                    if self.image.checkBackGround(checksnow=True) != i + 5:
+                        print_dug(f"Leave snow{i} Fail! It's ")
+                        self.action.leaveSnow(i, self.lock_verify)
+                        self.action.reset()
+                    else:
+                        success_flag = True
+                        break
+                if success_flag == False:
+                    self.lock_verify.acquire()
+                    self.action.click(self.action.quitLocation)
+                    self.lock_verify.release()
+                    self.room_count += 1
+                self.findGetFoodRubbish()
+            self.lock_verify.acquire()
+            self.action.click(self.action.quitLocation)
+            self.lock_verify.release()
+            self.room_count += 1
+
     def noappThread(self, function, timeTake=0):
         while not self.stopSignal:
             function()
@@ -235,9 +321,10 @@ class AntYecai(object):
             [(self.hunt, 0.5), (self.transfer, 20)],
             [(self.dig, 4)],
             [(self.eat, 0)],
-            [(self.earn, 0)]][mode]
+            [(self.earn, 0)],
+            [(self.earnSnowNorth, 0)]][mode]
 
-        theThread = self.noappThread if mode == 4 or mode == 3 else self.appThread
+        theThread = self.noappThread if mode == 4 or mode == 3 or mode == 5 else self.appThread
 
         for work, timeTake in workmode:
             self.thread.append(th.Thread(target=theThread, args=(work, timeTake)))
@@ -250,23 +337,23 @@ class AntYecai(object):
 
 if __name__ == '__main__':
     print('*' * 20)
-    time.sleep(2)
-    program = AntYecai(test=True)
+    # time.sleep(2)
+    program = AntYecai(test=False)
     program.mouseLocation()
-
-    print(
-        """
-    Work Mode:
-    0: Fish
-    1: Hunting
-    2: Diging
-    3: Eating with hunting
-    4: Earning
-    5: Earn Snow with North
-    """
-    )
-    program.start(2)
-
+    program.start(5)
+    # program.action.leaveSnow2(program.lock_verify)
+    # print(
+    #     """
+    # Work Mode:
+    # 0: Fish
+    # 1: Hunting
+    # 2: Diging
+    # 3: Eating with hunting
+    # 4: Earning
+    # 5: Earn Snow with North
+    # """
+    # )
+    # program.start(2)
 
 
 

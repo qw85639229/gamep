@@ -15,7 +15,10 @@ class Action_yecai(object):
         self.rightLocation = (1018, 438)
         self.resetLocation = (640,10)
         self.quitLocation = (1064,732)
-
+        self.stripStartDrag = (787, 221)
+        self.stripEndDrag = (786, 450)
+        self.roomPassWordLocation = (646 , 387)
+        self.roomPassWordEnterLocation = (583 , 472)
     def reLo(self, location):
         return (location[0] + self.windowLeftUp[0], location[1] + self.windowLeftUp[1])
 
@@ -148,10 +151,67 @@ class Action_yecai(object):
     def press(self, location):
         pyautogui.press(location)
 
-    def move(self, location, timeTake, relo=True):
+    def move(self, location, timeTake=0.2, relo=True):
         location = self.reLo(location) if relo else location
         pyautogui.moveTo(location)
         time.sleep(timeTake)
+
+    def drag(self, start, end, timetake=0.2):
+        pyautogui.moveTo(self.reLo(start))
+        pyautogui.dragTo(self.reLo(end),duration=timetake)
+
+    def enterRoomPassword(self, pw):
+        pyautogui.click(self.reLo(self.roomPassWordLocation))
+        time.sleep(0.05)
+        pyautogui.typewrite(message=pw,interval=0.4)
+        pyautogui.click(self.reLo(self.roomPassWordEnterLocation))
+        time.sleep(0.05)
+
+    def leaveSnow1(self, lock):
+        location1 = (632, 426)
+        location2 = (879 , 194)
+        lock.acquire()
+        self.click(location1)
+        lock.release()
+        time.sleep(5)
+        lock.acquire()
+        self.click(location2)
+        lock.release()
+        time.sleep(5)
+        return
+
+    def leaveSnow2(self, lock):
+        location1 = (535 , 413)
+        location2 = (967 , 389)
+        # location3 = (1081 , 306)
+        location3 = (1091 , 112)
+        for i in [location1,location2,location3]:
+            lock.acquire()
+            self.click(i)
+            lock.release()
+            time.sleep(5)
+
+    def leaveSnow3(self, lock):
+        location1 = (883 , 227)
+        lock.acquire()
+        self.click(location1)
+        lock.release()
+        time.sleep(10)
+
+    def leaveSnow4(self, lock):
+        location1 = (624, 493)
+        location2 = (464 , 297)
+        location3 = (258, 281)
+        for i in [location1,location2, location3]:
+            lock.acquire()
+            self.click(i)
+            lock.release()
+            time.sleep(5)
+
+    def leaveSnow(self,num, lock):
+        function = [self.leaveSnow1,self.leaveSnow2,self.leaveSnow3,self.leaveSnow4,][num]
+        function(lock)
+
 
     def reset(self):
         pyautogui.moveTo(self.reLo(self.resetLocation))

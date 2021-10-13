@@ -64,8 +64,13 @@ class Image_yecai(object):
         self.area_hometown_img = readimg('img/area/area_hometown.png')
         self.area_room_img = readimg('img/area/area_room.png')
         self.area_circle_img = readimg('img/area/circle.png')
+        self.area_caomei_img = readimg('img/area/caomei.png')
         self.area_notice = readimg('img/area/notice.png')
         self.area_enter = readimg('img/area/enter.png')
+        self.area_snow2 = readimg('img/area/snow2.png')
+        self.area_snow3 = readimg('img/area/snow3.png')
+        self.area_snow4 = readimg('img/area/snow4.png')
+        self.area_snow5 = readimg('img/area/snow5.png')
         #food
         self.food_caomei_img = readimg('img/food/food_caomei.png')
         self.food_lizi_img = readimg('img/food/food_lizi.png')
@@ -430,17 +435,24 @@ class Image_yecai(object):
             return 3
         return -1
 
-    def checkBackGround(self):
+    def checkBackGround(self, checksnow=False):
         background_img = [self.area_start_img,
                           self.area_new_img,
                           self.area_hunt_img,
                           self.area_hometown_img,
-                          self.area_room_img]
+                          self.area_room_img,
+                          self.area_snow2,
+                          self.area_snow3,
+                          self.area_snow4,
+                          self.area_snow5
+                          ]
+
         img = self.shoot(*self.backgroundLocation)
         # cv2.imshow('r',img)
         # cv2.waitKey()
         # exit()
-        for i in range(len(background_img)):
+        startPoint = 5 if checksnow else 0
+        for i in range(startPoint, len(background_img)):
             ret = aircv.find_all_template(img, background_img[i], threshold=0.9)
             if len(ret) > 0:
                 return i
@@ -449,6 +461,15 @@ class Image_yecai(object):
     def checkRoomCircle(self):
         img = self.shoot(*self.backgroundLocation)
         ret = aircv.find_all_template(img, self.area_circle_img, threshold=0.8)
+        ans = []
+        for i in ret:
+            ans.append(tuple(map(int, i['result'])))
+        ans.sort(key = lambda x:x[1])
+        return ans
+
+    def checkRoomCaomei(self):
+        img = self.shoot(*self.backgroundLocation)
+        ret = aircv.find_all_template(img, self.area_caomei_img, threshold=0.8)
         ans = []
         for i in ret:
             ans.append(tuple(map(int, i['result'])))
