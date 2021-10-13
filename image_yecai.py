@@ -135,6 +135,8 @@ class Image_yecai(object):
         if len(ret) > 0:
             return 4, self.rightArrow(ret[0]['result'], img)
 
+        return 0, None
+
     def iou(self, box1, box2):
         '''
         box:[x1, y1, x2, y2]
@@ -496,15 +498,23 @@ if __name__ == "__main__":
     img = cv2.imread('img/test/test8.png')
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    binary = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 21, 1)
+    mean_value = np.mean(gray)
+    # ret, binary = cv2.threshold(gray, mean_value, 255, cv2.THRESH_TOZERO_INV)
+    # gray = cv2.bitwise_not(gray)
+    binary = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
+    # binary = cv2.bitwise_not(binary)
+    cv2.imshow('r',binary)
+    cv2.waitKey()
     contours, hierarchy = cv2.findContours(binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     ret = (80, 0, 0, 0)
+    # print(ret[0])
     for contour in contours:
         x, y, w, h = cv2.boundingRect(contour)
         if not 40 * 40 <= w * h <= 70 * 70 or not abs(w - h) <= 5:
             continue
+        # print(x,y,w,h)
         if x > ret[0]:
             ret = (x, y, w, h)
-    cv2.circle(img,(ret[0],ret[1]),4,(255,0,0),4)
+            cv2.rectangle(img, (x,y), (x+w, y+h), (0,0,255), 4)
     cv2.imshow('r',img)
     cv2.waitKey()

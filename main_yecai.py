@@ -135,10 +135,14 @@ class AntYecai(object):
             for x,y,w,h in self.div:
                 middle_x = x + w // 2
                 middle_y = y + h // 2
+                self.lock_verify.acquire()
                 self.action.move((middle_x, middle_y), 0.05)
+                self.lock_verify.release()
                 type_hand = self.image.checkMouse((middle_x, middle_y)) #0->food 1->monster 2->big rubbish
                 if type_hand == 0:
+                    self.lock_verify.acquire()
                     self.action.click((middle_x, middle_y))
+                    self.lock_verify.release()
                     time.sleep(10)
                     # return
                 if type_hand == 1:
@@ -148,11 +152,15 @@ class AntYecai(object):
                 elif type_hand == 3:
                     self.forbinpoint.append((x,y,w,h))
             if len(monster) > 0:
+                self.lock_verify.acquire()
                 self.action.click(monster[0], right=True)
+                self.lock_verify.release()
                 return
 
             if len(rubbish) > 0:
+                self.lock_verify.acquire()
                 self.action.click(rubbish[0],right=True)
+                self.lock_verify.release()
                 return
 
     def earn(self):
@@ -229,7 +237,7 @@ class AntYecai(object):
             [(self.eat, 0)],
             [(self.earn, 0)]][mode]
 
-        theThread = self.noappThread if mode == 4 else self.appThread
+        theThread = self.noappThread if mode == 4 or mode == 3 else self.appThread
 
         for work, timeTake in workmode:
             self.thread.append(th.Thread(target=theThread, args=(work, timeTake)))
