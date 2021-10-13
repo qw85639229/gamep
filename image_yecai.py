@@ -390,7 +390,7 @@ class Image_yecai(object):
         return ret
 
     def div(self, num):
-        img = self.shoot(*self.basketballLocation)
+        img = self.shoot(*self.backgroundLocation)
         if len(self.background_imgs) < num:
             self.background_imgs.append(img)
             return None
