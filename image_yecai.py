@@ -336,18 +336,22 @@ class Image_yecai(object):
             # exit()
             max_count = 0
             max_index = 0
-            threshold = 50
+            threshold = sum(strip_value) / (strip_value.shape[0])
             count = 0
+            next_y = []
             for i in range(strip_value.shape[0]):
-                if strip_value[i] < 50:
+                if strip_value[i] < threshold:
                     count += 1
                     if count > max_count:
                         max_count = count
                         max_index = i
                 else:
                     count = 0
-
-            return (max_index - max_count // 2 + self.verifyLeftUp[0] + self.windowLeftUp[0], rightArrowLocation[1])
+                next_y.append(count)
+            # plt.plot(x, next_y, color='green', linewidth=2.0)
+            # plt.plot()
+            print(f'rightArrow: {max_index}/{max_count}')
+            return (max_index - max_count // 2 + self.verifyLeftUp[0] + self.windowLeftUp[0], self.rightArrowLocation[1])
 
 
         #

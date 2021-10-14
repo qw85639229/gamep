@@ -76,7 +76,7 @@ class AntYecai(object):
                         if not self.image.verify()[0] == 1:
                             break
         elif situation == 4:
-            # print('start')
+
             data = self.image.rightArrow(detect=False)
             self.action.rightArrow(data)
         return False
@@ -272,7 +272,7 @@ class AntYecai(object):
                 self.action.leaveSnow(i)
                 self.action.reset()
                 success_flag = False
-                for j in range(5):
+                for j in range(2):
                     if self.image.checkBackGround(checksnow=True) != i + 5:
                         print_dug(f"Leave snow{i} Fail! It's ")
                         self.action.leaveSnow(i)
@@ -319,7 +319,7 @@ if __name__ == '__main__':
     time.sleep(2)
     program = AntYecai(test=False)
     program.mouseLocation()
-    program.start(5)
+    # program.start(5)
     # program.action.leaveSnow2(program.lock_verify)
     print(
         """
@@ -338,25 +338,26 @@ if __name__ == '__main__':
 
 
     # rubbish
-    # program = AntYecai(test=True)
+    # program = AntYecai(test=False)
     # program.mouseLocation()
     # rubbishMan = (576, 283)
     # rubbishUp = (734, 376)
     # rubbishExchange = (574, 470)
     # rubbishStop = [(467, 444),(569, 449),(683, 444)]
-    #
-    # #click rubbish man
+    #click rubbish man
     # while True:
     #     program.action.click(rubbishMan)
     #     #click rubbish up
     #     for i in range(3):
     #         program.action.click(rubbishUp)
+    #         time.sleep(0.05)
     #     #exchange
     #     program.action.click(rubbishExchange)
-    #
+    #     time.sleep(0.1)
     #     for i in range(3):
     #         program.action.click(rubbishStop[i])
-    #     time.sleep(5)
+    #         time.sleep(0.2)
+    #     time.sleep(8)
 
     #test
     # import numpy as np

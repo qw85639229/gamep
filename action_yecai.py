@@ -10,6 +10,7 @@ class Action_yecai(object):
         pyautogui.FAILSAFE = True
         self.lock = lock
         self.timeTake = 6
+        self.snowTimeTake = 3
         """Location"""
         self.buttonLocation = (244, 159)
         self.rightArrowRight = (757,449)
@@ -106,6 +107,7 @@ class Action_yecai(object):
         return
 
     def rightArrow(self,data):
+        print(f'move to ({data[0]}, {data[1]})')
         pyautogui.mouseUp(x=data[0], y=data[1], button='left', duration=0.2)
         # rightArrowLocation, targetLocation = data
         # pyautogui.moveTo(*rightArrowLocation)
@@ -166,18 +168,18 @@ class Action_yecai(object):
         self.lock.release()
         # time.sleep(self.timeTake)
 
-    def click(self, location, right=False, relo=True, iflock=True):
+    def click(self, location, timeTake=0.05, right=False, relo=True, iflock=True):
         if relo:
             location = self.reLo(location)
         if iflock:
             self.lock.acquire()
         pyautogui.moveTo(location)
-        time.sleep(0.05)
+        time.sleep(timeTake)
         if right:
             pyautogui.rightClick()
         else:
             pyautogui.click()
-        time.sleep(0.05)
+        time.sleep(timeTake)
         if iflock:
             self.lock.release()
 
@@ -221,9 +223,9 @@ class Action_yecai(object):
         location1 = (632, 426)
         location2 = (879 , 194)
         self.click(location1)
-        time.sleep(5)
+        time.sleep(self.snowTimeTake)
         self.click(location2)
-        time.sleep(5)
+        time.sleep(self.snowTimeTake)
         return
 
     def leaveSnow2(self):
@@ -233,7 +235,7 @@ class Action_yecai(object):
         location3 = (1091 , 112)
         for i in [location1,location2,location3]:
             self.click(i)
-            time.sleep(5)
+            time.sleep(self.snowTimeTake)
 
     def leaveSnow3(self):
         location1 = (728, 405)
@@ -241,7 +243,7 @@ class Action_yecai(object):
         # location2 = (728 , 405)
         for i in [location1, location2]:
             self.click(i)
-            time.sleep(5)
+            time.sleep(self.snowTimeTake)
 
     def leaveSnow4(self):
         location1 = (624, 493)
@@ -249,7 +251,7 @@ class Action_yecai(object):
         location3 = (258, 281)
         for i in [location1,location2, location3]:
             self.click(i)
-            time.sleep(5)
+            time.sleep(self.snowTimeTake)
 
     def leaveSnow(self,num):
         function = [self.leaveSnow1,self.leaveSnow2,self.leaveSnow3,self.leaveSnow4,][num]
