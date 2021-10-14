@@ -289,23 +289,35 @@ class Image_yecai(object):
                 pass
         return (max_han_word, enterLocation, blankLocation)
 
-    def rightArrow(self, rightArrowLocation, img):
-        rightArrowLocation = tuple([int(x) for x in rightArrowLocation])
-        rightArrowLocation = self.reLo(
-            (rightArrowLocation[0] + self.verifyLeftUp[0], rightArrowLocation[1] + self.verifyLeftUp[1]))
+    def rightArrow(self, rightArrowLocation, img, detect= True):
 
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        binary = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 21, 1)
-        contours, hierarchy = cv2.findContours(binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        ret = (80, 0, 0, 0)
-        for contour in contours:
-            x, y, w, h = cv2.boundingRect(contour)
-            if not 40 * 40 <= w * h <= 70 * 70 or not abs(w - h) <= 5:
-                continue
-            if x > ret[0]:
-                ret = (x, y, w, h)
+        if detect:
+            rightArrowLocation = tuple([int(x) for x in rightArrowLocation])
+            rightArrowLocation = self.reLo(
+                (rightArrowLocation[0] + self.verifyLeftUp[0], rightArrowLocation[1] + self.verifyLeftUp[1]))
+            self.preRightArrow = img
+            self.rightArrowLocation = rightArrowLocation
+            return (rightArrowLocation)
+        else:
+            next_img = self.shoot(*self.verifyLeftUp, self.verifyRightDown[0] - self.verifyLeftUp[0],
+                             self.verifyRightDown[1] - self.verifyLeftUp[1])
 
-        return (rightArrowLocation, (ret[0] + ret[2] // 2 + self.verifyLeftUp[0] + self.windowLeftUp[0], rightArrowLocation[1]))
+        #
+        # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # binary = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 21, 1)
+        # contours, hierarchy = cv2.findContours(binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        # ret = (80, 0, 0, 0)
+        # for contour in contours:
+        #     x, y, w, h = cv2.boundingRect(contour)
+        #     if not 40 * 40 <= w * h <= 70 * 70 or not abs(w - h) <= 5:
+        #         continue
+        #     if x > ret[0]:
+        #         ret = (x, y, w, h)
+        #         # cv2.rectangle(img, (x,y), (x+w, y+h), (0,0,255), 4)
+        # # cv2.imshow('r',img)
+        # # cv2.waitKey()
+        # # exit()
+        # return (rightArrowLocation, (ret[0] + ret[2] // 2 + self.verifyLeftUp[0] + self.windowLeftUp[0], rightArrowLocation[1]))
 
     def fish(self):
         img = self.shoot(*self.fishLocation)

@@ -4,15 +4,20 @@ import time
 import pyperclip
 
 class Action_yecai(object):
-    def __init__(self, windowLeftUp):
+    def __init__(self, windowLeftUp, lock):
         self.windowLeftUp = windowLeftUp
         pyautogui.PAUSE = 0.005
         pyautogui.FAILSAFE = True
+        self.lock = lock
         self.timeTake = 6
         """Location"""
         self.buttonLocation = (244, 159)
-        self.leftLocation = (211, 377)
-        self.rightLocation = (1018, 438)
+
+        self.leftLocation = (443 , 353)
+        self.rightLocation = (869 , 353)
+        self.leftDownLocation = (438 , 544)
+        self.rightDownLocation = (869 , 553)
+
         self.resetLocation = (640,10)
         self.quitLocation = (1064,732)
         self.stripStartDrag = (787, 221)
@@ -36,8 +41,9 @@ class Action_yecai(object):
 
     def coverdbasketball(self, data, type=0):
         x, y, w, h = data
-        location0, location1 = (x+5, y+5), (x+w-5, y+h-5)
-        location2, location3 = (x+w-5, y+5), (x+5, y+h-5)
+        gap = 20
+        location0, location1 = (x+gap, y+gap), (x+w-gap, y+h-gap)
+        location2, location3 = (x+w-gap, y+gap), (x+gap, y+h-gap)
         (location_1, location_2) = [(location0, location1),
                                     (location1, location0),
                                     (location2, location3),
@@ -103,118 +109,147 @@ class Action_yecai(object):
 
     def fish(self, rate):
         if rate > 1:
+            self.lock.acquire()
             pyautogui.keyDown('up')
+            self.lock.release()
             time_take = 0.5 if rate >= 1.7 else 0.2
             time.sleep(time_take)
+            self.lock.acquire()
             pyautogui.keyUp('up')
+            self.lock.release()
         else:
+            self.lock.acquire()
             pyautogui.keyDown('down')
+            self.lock.release()
             time_take = 0.5 if rate <= 0.4 else 0.2
             time.sleep(time_take)
+            self.lock.acquire()
             pyautogui.keyUp('down')
+            self.lock.release()
 
     def fishflag(self):
+        self.lock.acquire()
         pyautogui.moveTo(*self.reLo(self.buttonLocation))
-        time.sleep(0.2)
+        time.sleep(0.05)
         pyautogui.click()
-        time.sleep(0.2)
+        time.sleep(0.05)
         # print('点击钓鱼按钮')
         pyautogui.moveTo(self.reLo((100,100)))
-        time.sleep(0.2)
+        time.sleep(0.05)
+        self.lock.release()
 
-    def dig(self,right=False):
+    def dig(self,type=0):
         leftLocation = self.reLo(self.leftLocation)
         rightLocation = self.reLo(self.rightLocation)
-        if right:
-            action = rightLocation
-        else:
-            action = leftLocation
+        leftdownLocation = self.reLo(self.leftDownLocation)
+        rightdownLocation = self.reLo(self.rightDownLocation)
 
+        action = [leftLocation, leftdownLocation, rightdownLocation, rightLocation][type]
+        self.lock.acquire()
         pyautogui.moveTo(*action)
         time.sleep(0.05)
         pyautogui.click()
         time.sleep(0.05)
+        pyautogui.moveTo(self.reLo((640,100)))
+        time.sleep(0.05)
         pyautogui.rightClick()
+        time.sleep(0.05)
+        self.lock.release()
         # time.sleep(self.timeTake)
 
-    def click(self, location, right=False, relo=True):
+    def click(self, location, right=False, relo=True, iflock=True):
         if relo:
             location = self.reLo(location)
+        if iflock:
+            self.lock.acquire()
         pyautogui.moveTo(location)
-        time.sleep(0.2)
+        time.sleep(0.05)
         if right:
             pyautogui.rightClick()
         else:
             pyautogui.click()
-        time.sleep(0.2)
+        time.sleep(0.05)
+        if iflock:
+            self.lock.release()
 
-    def press(self, location):
+    def press(self, location, iflock=True):
+        if iflock:
+            self.lock.acquire()
         pyautogui.press(location)
+        if iflock:
+            self.lock.release()
 
-    def move(self, location, timeTake=0.2, relo=True):
+    def move(self, location, timeTake=0.2, relo=True, iflock=True):
+        if iflock:
+            self.lock.acquire()
         location = self.reLo(location) if relo else location
         pyautogui.moveTo(location)
         time.sleep(timeTake)
+        if iflock:
+            self.lock.release()
 
-    def drag(self, start, end, timetake=0.2):
+    def drag(self, start, end, timetake=0.2,  iflock=True):
+        if iflock:
+            self.lock.acquire()
         pyautogui.moveTo(self.reLo(start))
         pyautogui.dragTo(self.reLo(end),duration=timetake)
+        if iflock:
+            self.lock.release()
 
-    def enterRoomPassword(self, pw):
+    def enterRoomPassword(self, pw, iflock=True):
+        if iflock:
+            self.lock.acquire()
         pyautogui.click(self.reLo(self.roomPassWordLocation))
         time.sleep(0.05)
         pyautogui.typewrite(message=pw,interval=0.4)
         pyautogui.click(self.reLo(self.roomPassWordEnterLocation))
         time.sleep(0.05)
+        if iflock:
+            self.lock.release()
 
-    def leaveSnow1(self, lock):
+
+    def leaveSnow1(self):
         location1 = (632, 426)
         location2 = (879 , 194)
-        lock.acquire()
         self.click(location1)
-        lock.release()
         time.sleep(5)
-        lock.acquire()
         self.click(location2)
-        lock.release()
         time.sleep(5)
         return
 
-    def leaveSnow2(self, lock):
+    def leaveSnow2(self):
         location1 = (535 , 413)
         location2 = (967 , 389)
         # location3 = (1081 , 306)
         location3 = (1091 , 112)
         for i in [location1,location2,location3]:
-            lock.acquire()
             self.click(i)
-            lock.release()
             time.sleep(5)
 
-    def leaveSnow3(self, lock):
+    def leaveSnow3(self):
         location1 = (883 , 227)
-        lock.acquire()
         self.click(location1)
-        lock.release()
         time.sleep(10)
 
-    def leaveSnow4(self, lock):
+    def leaveSnow4(self):
         location1 = (624, 493)
         location2 = (464 , 297)
         location3 = (258, 281)
         for i in [location1,location2, location3]:
-            lock.acquire()
             self.click(i)
-            lock.release()
             time.sleep(5)
 
-    def leaveSnow(self,num, lock):
+    def leaveSnow(self,num):
         function = [self.leaveSnow1,self.leaveSnow2,self.leaveSnow3,self.leaveSnow4,][num]
-        function(lock)
+        function()
 
 
-    def reset(self):
+    def reset(self, iflock=True):
+        if iflock:
+            self.lock.acquire()
         pyautogui.moveTo(self.reLo(self.resetLocation))
-        time.sleep(0.2)
+        time.sleep(0.05)
         pyautogui.click()
-        time.sleep(0.2)
+        time.sleep(0.05)
+        if iflock:
+            self.lock.release()

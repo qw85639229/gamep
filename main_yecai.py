@@ -18,7 +18,8 @@ class AntYecai(object):
         left, top, right, bottom = win32gui.GetWindowRect(hwnd)
         print(f'Find location: left:{left}, top:{top}, right:{right}, bottom:{bottom}')
         self.windowLeftUp = (left,top)
-        self.action = Action_yecai(self.windowLeftUp)
+        self.lock_verify = th.Lock()
+        self.action = Action_yecai(self.windowLeftUp, self.lock_verify)
         self.image = Image_yecai(self.windowLeftUp)
         self.verify_siuation = [": No verification",
                                 ": Bastketball Check",
@@ -33,7 +34,6 @@ class AntYecai(object):
             th.Thread(target=self.signalFunction, args=(), name='key_capture_thread', daemon=True).start()
 
         """Application Thread"""
-        self.lock_verify = th.Lock()
         self.lock_app = th.Lock()
         #verification
         if not test:
@@ -51,9 +51,10 @@ class AntYecai(object):
         #hunting
         #dig
         self.dig_count = 0
+        self.dig_type = 0
 
     def verify(self):
-        self.action.reset()
+        self.action.reset(iflock=False)
         situation, data = self.image.verify()
         if situation != 0:
             print(time.strftime("%H:%M:%S", time.localtime()), self.verify_siuation[situation])
@@ -63,14 +64,14 @@ class AntYecai(object):
         methods= [None, self.action.basketball, self.action.wordMath, self.action.wordHan, self.action.rightArrow]
         methods[situation](data)
         if situation == 1:
-            self.action.reset()
+            self.action.reset(iflock=False)
             if self.image.verify()[0] == 1:
                 if len(data) == 2:
                     methods[situation](data[::-1])
                 elif len(data) == 4:
                     for i in range(1,4):
                         methods[situation](data, type=i)
-                        self.action.reset()
+                        self.action.reset(iflock=False)
                         if not self.image.verify()[0] == 1:
                             break
 
@@ -121,13 +122,16 @@ class AntYecai(object):
 
 
     def dig(self):
-        right_signal = False
-        if self.dig_count >= 6:
-            right_signal = True
-        self.action.dig(right_signal)
-        self.dig_count += 1
-        if self.dig_count >= 12:
-            self.dig_count = 0
+        if self.image.checkHP() >= 0.2:
+            self.action.dig(self.dig_type)
+            self.dig_count += 1
+            if self.dig_count >= 6:
+                self.dig_count = 0
+                self.dig_type += 1
+            if self.dig_type >= 4:
+                self.dig_type = 0
+        else:
+            time.sleep(0.2)
 
     def checkdiv(self):
         divret = self.image.div(6)
@@ -141,14 +145,10 @@ class AntYecai(object):
             for x,y,w,h in self.div:
                 middle_x = x + w // 2
                 middle_y = y + h // 2
-                self.lock_verify.acquire()
                 self.action.move((middle_x, middle_y), 0.05)
-                self.lock_verify.release()
                 type_hand = self.image.checkMouse((middle_x, middle_y)) #0->food 1->monster 2->big rubbish
                 if type_hand == 0:
-                    self.lock_verify.acquire()
                     self.action.click((middle_x, middle_y))
-                    self.lock_verify.release()
                     time.sleep(10)
                     # return
                 if type_hand == 1:
@@ -158,15 +158,11 @@ class AntYecai(object):
                 elif type_hand == 3:
                     self.forbinpoint.append((x,y,w,h))
             if len(monster) > 0:
-                self.lock_verify.acquire()
                 self.action.click(monster[0], right=True)
-                self.lock_verify.release()
                 return
 
             if len(rubbish) > 0:
-                self.lock_verify.acquire()
                 self.action.click(rubbish[0],right=True)
-                self.lock_verify.release()
                 return
 
     def earn(self):
@@ -174,9 +170,7 @@ class AntYecai(object):
         print('what',roomtype)
         if roomtype == 4:
             print("There is Room and quit")
-            self.lock_verify.acquire()
             self.action.click(self.action.quitLocation)
-            self.lock_verify.release()
             return
         if roomtype == 3:
             circles = self.image.checkRoomCircle()
@@ -210,15 +204,11 @@ class AntYecai(object):
                 if handtype != 0:
                     # print("Error with hand type: ", handtype)
                     continue
-                self.lock_verify.acquire()
                 self.action.click(location)
-                self.lock_verify.release()
                 time.sleep(2)
             print('Finish collecting and quit the room')
             #quit the room
-            self.lock_verify.acquire()
             self.action.click(self.action.quitLocation)
-            self.lock_verify.release()
             self.room_count += 1
 
     def findGetFoodRubbish(self, food=True, rubbish=True, timeTake=3):
@@ -229,9 +219,7 @@ class AntYecai(object):
             if handtype != 0:
                 # print("Error with hand type: ", handtype)
                 continue
-            self.lock_verify.acquire()
             self.action.click(location)
-            self.lock_verify.release()
             time.sleep(timeTake)
         return
 
@@ -241,9 +229,7 @@ class AntYecai(object):
         print_dug(f'Find Room Type: {roomType[roomtype]}')
         if roomtype >= 4:
             print_dug("There is Room and quit")
-            self.lock_verify.acquire()
             self.action.click(self.action.quitLocation)
-            self.lock_verify.release()
             return
         elif roomtype == 1:
             self.action.drag(self.action.stripStartDrag, self.action.stripEndDrag)
@@ -279,39 +265,27 @@ class AntYecai(object):
             # check food and rubbish
             self.findGetFoodRubbish()
             for i in range(4):
-                self.action.leaveSnow(i, self.lock_verify)
+                self.action.leaveSnow(i)
                 self.action.reset()
                 success_flag = False
                 for j in range(5):
                     if self.image.checkBackGround(checksnow=True) != i + 5:
                         print_dug(f"Leave snow{i} Fail! It's ")
-                        self.action.leaveSnow(i, self.lock_verify)
+                        self.action.leaveSnow(i)
                         self.action.reset()
                     else:
                         success_flag = True
                         break
                 if success_flag == False:
-                    self.lock_verify.acquire()
                     self.action.click(self.action.quitLocation)
-                    self.lock_verify.release()
                     self.room_count += 1
                 self.findGetFoodRubbish()
-            self.lock_verify.acquire()
             self.action.click(self.action.quitLocation)
-            self.lock_verify.release()
             self.room_count += 1
-
-    def noappThread(self, function, timeTake=0):
-        while not self.stopSignal:
-            function()
-            if timeTake > 0:
-                time.sleep(timeTake)
 
     def appThread(self, function, timeTake=0):
         while not self.stopSignal:
-            self.lock_verify.acquire()
             function()
-            self.lock_verify.release()
             if timeTake > 0:
                 time.sleep(timeTake)
 
@@ -324,7 +298,7 @@ class AntYecai(object):
             [(self.earn, 0)],
             [(self.earnSnowNorth, 0)]][mode]
 
-        theThread = self.noappThread if mode == 4 or mode == 3 or mode == 5 else self.appThread
+        theThread = self.appThread
 
         for work, timeTake in workmode:
             self.thread.append(th.Thread(target=theThread, args=(work, timeTake)))
@@ -337,10 +311,10 @@ class AntYecai(object):
 
 if __name__ == '__main__':
     print('*' * 20)
-    # time.sleep(2)
+    time.sleep(2)
     program = AntYecai(test=False)
     program.mouseLocation()
-    program.start(5)
+    program.start(2)
     # program.action.leaveSnow2(program.lock_verify)
     # print(
     #     """
