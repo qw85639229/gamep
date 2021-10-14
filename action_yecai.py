@@ -236,8 +236,9 @@ class Action_yecai(object):
             time.sleep(5)
 
     def leaveSnow3(self):
-        location1 = (883 , 227)
-        location2 = (728 , 405)
+        location1 = (728, 405)
+        location2 = (883 , 227)
+        # location2 = (728 , 405)
         for i in [location1, location2]:
             self.click(i)
             time.sleep(5)
