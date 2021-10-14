@@ -61,8 +61,9 @@ class AntYecai(object):
         if situation == 0:
             return True
         self.fish_verify = True
-        methods= [None, self.action.basketball, self.action.wordMath, self.action.wordHan, self.action.rightArrow]
+        methods= [None, self.action.basketball, self.action.wordMath, self.action.wordHan, self.action.rightArrowPre]
         methods[situation](data)
+        # print(f'situation = {situation}')
         if situation == 1:
             self.action.reset(iflock=False)
             if self.image.verify()[0] == 1:
@@ -74,7 +75,10 @@ class AntYecai(object):
                         self.action.reset(iflock=False)
                         if not self.image.verify()[0] == 1:
                             break
-
+        elif situation == 4:
+            # print('start')
+            data = self.image.rightArrow(detect=False)
+            self.action.rightArrow(data)
         return False
 
     def verifing(self, timeTake = 10):
@@ -314,7 +318,7 @@ if __name__ == '__main__':
     time.sleep(2)
     program = AntYecai(test=False)
     program.mouseLocation()
-    program.start(2)
+    # program.start(2)
     # program.action.leaveSnow2(program.lock_verify)
     # print(
     #     """
@@ -352,3 +356,16 @@ if __name__ == '__main__':
     #     for i in range(3):
     #         program.action.click(rubbishStop[i])
     #     time.sleep(5)
+
+    #test
+    # program = AntYecai(test=True)
+    # program.mouseLocation()
+    # import pyautogui
+    # pyautogui.moveTo((602 , 354))
+    # pyautogui.mouseDown(x=602, y=354, button='left')
+    # time.sleep(0.05)
+    # pyautogui.moveTo((898 , 635))
+    # time.sleep(0.05)
+    # pyautogui.moveTo((288 , 644))
+    # time.sleep(0.05)
+    # pyautogui.mouseUp(x=602, y=354, button='left')

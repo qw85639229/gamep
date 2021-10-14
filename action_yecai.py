@@ -12,6 +12,7 @@ class Action_yecai(object):
         self.timeTake = 6
         """Location"""
         self.buttonLocation = (244, 159)
+        self.rightArrowRight = (757,449)
 
         self.leftLocation = (443 , 353)
         self.rightLocation = (869 , 353)
@@ -97,14 +98,22 @@ class Action_yecai(object):
         time.sleep(0.2)
         return
 
-    def rightArrow(self,data):
-        rightArrowLocation, targetLocation = data
+    def rightArrowPre(self, data):
+        rightArrowLocation = data
         pyautogui.moveTo(*rightArrowLocation)
-        time.sleep(0.2)
-        pyautogui.dragTo(x=targetLocation[0], y=targetLocation[1], duration=0.5, button='left')
-        time.sleep(0.2)
-        pyautogui.moveTo(*targetLocation)
-        time.sleep(0.2)
+        pyautogui.mouseDown(x=rightArrowLocation[0], y=rightArrowLocation[1], button='left')
+        pyautogui.moveTo(*self.reLo(self.rightArrowRight),duration=0.2)
+        return
+
+    def rightArrow(self,data):
+        pyautogui.mouseUp(x=data[0], y=data[1], button='left', duration=0.2)
+        # rightArrowLocation, targetLocation = data
+        # pyautogui.moveTo(*rightArrowLocation)
+        # time.sleep(0.2)
+        # pyautogui.dragTo(x=targetLocation[0], y=targetLocation[1], duration=0.5, button='left')
+        # time.sleep(0.2)
+        # pyautogui.moveTo(*targetLocation)
+        # time.sleep(0.2)
         return
 
     def fish(self, rate):

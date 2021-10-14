@@ -144,7 +144,7 @@ class Image_yecai(object):
         """4: Right Arrow"""
         ret = aircv.find_all_template(img, self.right_arrow_img)
         if len(ret) > 0:
-            return 4, self.rightArrow(ret[0]['result'], img)
+            return 4, self.rightArrow(img, ret[0]['result'], True)
 
         return 0, None
 
@@ -289,7 +289,7 @@ class Image_yecai(object):
                 pass
         return (max_han_word, enterLocation, blankLocation)
 
-    def rightArrow(self, rightArrowLocation, img, detect= True):
+    def rightArrow(self, img=None, rightArrowLocation=(0,0), detect=True):
 
         if detect:
             rightArrowLocation = tuple([int(x) for x in rightArrowLocation])
@@ -301,6 +301,33 @@ class Image_yecai(object):
         else:
             next_img = self.shoot(*self.verifyLeftUp, self.verifyRightDown[0] - self.verifyLeftUp[0],
                              self.verifyRightDown[1] - self.verifyLeftUp[1])
+            div = next_img - self.preRightArrow
+            div = np.abs(div)
+            div = np.array(div, np.uint8)
+            div = cv2.cvtColor(div, cv2.COLOR_BGR2GRAY)
+            ret, div = cv2.threshold(div, 0, 255, type=cv2.THRESH_BINARY)
+            contours, hierarchy = cv2.findContours(div, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            ret = None
+            for contour in contours:
+                x, y, w, h = cv2.boundingRect(contour)
+                if not 40 * 40 <= w * h <= 70 * 70 or not abs(w - h) <= 5:
+                    continue
+                else:
+                    ret = (x, y, w, h)
+                    break
+
+            if ret == None:
+                return (80 + self.verifyLeftUp[0] + self.windowLeftUp[0], rightArrowLocation[1])
+
+            strip_img = self.preRightArrow[ret[1]:ret[1]+ret[3], :, :]
+            strip_img = cv2.cvtColor(strip_img, cv2.COLOR_BGR2GRAY)
+            strip_img = np.array(strip_img,dtype=np.float)
+            strip_value = np.mean(strip_img, axis=0)
+            for i in range(30, strip_img.shape[0] - 30):
+                strip_value[i] = sum(strip_value[i-20:i+20]) / 40
+            index = np.argmin(strip_value)
+            return (index + self.verifyLeftUp[0] + self.windowLeftUp[0], rightArrowLocation[1])
+
 
         #
         # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -313,7 +340,7 @@ class Image_yecai(object):
         #         continue
         #     if x > ret[0]:
         #         ret = (x, y, w, h)
-        #         # cv2.rectangle(img, (x,y), (x+w, y+h), (0,0,255), 4)
+                # cv2.rectangle(img, (x,y), (x+w, y+h), (0,0,255), 4)
         # # cv2.imshow('r',img)
         # # cv2.waitKey()
         # # exit()
