@@ -322,11 +322,32 @@ class Image_yecai(object):
             strip_img = self.preRightArrow[ret[1]:ret[1]+ret[3], :, :]
             strip_img = cv2.cvtColor(strip_img, cv2.COLOR_BGR2GRAY)
             strip_img = np.array(strip_img,dtype=np.float)
+
+
             strip_value = np.mean(strip_img, axis=0)
             for i in range(30, strip_img.shape[0] - 30):
                 strip_value[i] = sum(strip_value[i-20:i+20]) / 40
-            index = np.argmin(strip_value)
-            return (index + self.verifyLeftUp[0] + self.windowLeftUp[0], rightArrowLocation[1])
+            # import matplotlib.pyplot as plt
+            # x = [i for i in range(strip_value.shape[0])]
+            # y = [strip_value[i] for i in range(strip_value.shape[0])]
+            # plt.plot(x,y,color='red',linewidth=2.0)
+            # plt.show()
+            # input()
+            # exit()
+            max_count = 0
+            max_index = 0
+            threshold = 50
+            count = 0
+            for i in range(strip_value.shape[0]):
+                if strip_value[i] < 50:
+                    count += 1
+                    if count > max_count:
+                        max_count = count
+                        max_index = i
+                else:
+                    count = 0
+
+            return (max_index - max_count // 2 + self.verifyLeftUp[0] + self.windowLeftUp[0], rightArrowLocation[1])
 
 
         #
@@ -364,10 +385,13 @@ class Image_yecai(object):
         # if len(ret) > 0:
         #     return False
         ret = self.ocr.ocr(img)
-        for i in ret[0][0]:
-            if i in '停止垂钓':
-                # print("保持钓鱼状态")
-                return False
+        try:
+            for i in ret[0][0]:
+                if i in '停止垂钓':
+                    # print("保持钓鱼状态")
+                    return False
+        except:
+            return True
         return True
 
     def checkMonster(self):

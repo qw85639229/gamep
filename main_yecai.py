@@ -318,19 +318,19 @@ if __name__ == '__main__':
     time.sleep(2)
     program = AntYecai(test=False)
     program.mouseLocation()
-    # program.start(2)
+    program.start(0)
     # program.action.leaveSnow2(program.lock_verify)
-    # print(
-    #     """
-    # Work Mode:
-    # 0: Fish
-    # 1: Hunting
-    # 2: Diging
-    # 3: Eating with hunting
-    # 4: Earning
-    # 5: Earn Snow with North
-    # """
-    # )
+    print(
+        """
+    Work Mode:
+    0: Fish
+    1: Hunting
+    2: Diging
+    3: Eating with hunting
+    4: Earning
+    5: Earn Snow with North
+    """
+    )
     # program.start(2)
 
 
