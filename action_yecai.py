@@ -237,8 +237,10 @@ class Action_yecai(object):
 
     def leaveSnow3(self):
         location1 = (883 , 227)
-        self.click(location1)
-        time.sleep(10)
+        location2 = (728 , 405)
+        for i in [location1, location2]:
+            self.click(i)
+            time.sleep(5)
 
     def leaveSnow4(self):
         location1 = (624, 493)

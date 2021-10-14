@@ -316,7 +316,7 @@ class AntYecai(object):
 
 if __name__ == '__main__':
     print('*' * 20)
-    # time.sleep(2)
+    time.sleep(2)
     program = AntYecai(test=False)
     program.mouseLocation()
     program.start(5)
