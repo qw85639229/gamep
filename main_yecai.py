@@ -283,6 +283,7 @@ class AntYecai(object):
                 if success_flag == False:
                     self.action.click(self.action.quitLocation)
                     self.room_count += 1
+                    return
                 self.findGetFoodRubbish()
             self.action.click(self.action.quitLocation)
             self.room_count += 1
@@ -315,10 +316,10 @@ class AntYecai(object):
 
 if __name__ == '__main__':
     print('*' * 20)
-    time.sleep(2)
+    # time.sleep(2)
     program = AntYecai(test=False)
     program.mouseLocation()
-    program.start(0)
+    program.start(5)
     # program.action.leaveSnow2(program.lock_verify)
     print(
         """
@@ -358,14 +359,36 @@ if __name__ == '__main__':
     #     time.sleep(5)
 
     #test
-    # program = AntYecai(test=True)
-    # program.mouseLocation()
-    # import pyautogui
-    # pyautogui.moveTo((602 , 354))
-    # pyautogui.mouseDown(x=602, y=354, button='left')
-    # time.sleep(0.05)
-    # pyautogui.moveTo((898 , 635))
-    # time.sleep(0.05)
-    # pyautogui.moveTo((288 , 644))
-    # time.sleep(0.05)
-    # pyautogui.mouseUp(x=602, y=354, button='left')
+    # import numpy as np
+    # import cv2
+    # background = program.image.shoot(*program.image.backgroundLocation)
+    # x_length = [170, 1120]
+    # y_length = [40, 670]
+    # map_img = np.zeros(background.shape, dtype=np.uint8)
+    # """
+    # walk area: white (255,255,255)
+    # door area: brown (135,184,222)
+    # forbidden area: yellow (0,255,255)
+    # """
+    # mouseTotalType = [-1, 0, 1, 2, 3]
+    # mapColor = [(0,0,0),       # black
+    #             (255,255,255), # white
+    #             (135,184,222), # brown
+    #             (0,255,255)]   # yellow
+    # cell_length = 40
+    # for x in range(x_length[0],x_length[1], cell_length):
+    #     for y in range(y_length[0],y_length[1],cell_length):
+    #         program.action.move((x+cell_length//2, y+cell_length//2), timeTake=0.1, iflock=False)
+    #         mousetype = program.image.checkMouse((x+cell_length//2, y+cell_length//2))
+    #         for i in range(5):
+    #             if mousetype != mouseTotalType[i]:
+    #                 continue
+    #             if i == 0:
+    #                 map_img[y:y+cell_length,x:x+cell_length,:] = list(mapColor[2])
+    #             elif 0 < i < 4:
+    #                 map_img[y:y + cell_length, x:x + cell_length, :] = list(mapColor[1])
+    #             elif i == 4:
+    #                 map_img[y:y + cell_length, x:x + cell_length, :] = list(mapColor[3])
+    #
+    # cv2.imshow('r',map_img)
+    # cv2.waitKey()

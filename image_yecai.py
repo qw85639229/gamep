@@ -54,7 +54,7 @@ class Image_yecai(object):
         self.food_hand_img = readimg('img/hand/food_hand.png')
         self.monster_hand_img = readimg('img/hand/monster_hand.png')
         self.rubbish_hand_img = readimg('img/hand/rubbish_hand.png')
-        self.forbin_hand_img = readimg('img/hand/forbin_hand_black.png')
+        self.forbin_hand_img = readimg('img/hand/forbin_hand.png')
         #fish
         self.fishflag_img = readimg('img/fish/fishflag1.png')
         #area
