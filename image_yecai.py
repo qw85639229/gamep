@@ -94,7 +94,7 @@ class Image_yecai(object):
         self.rubbish_tyre_img = readimg('img/rubbish/tyre.png')
         self.rubbish_paomian_img = readimg('img/rubbish/paomian.png')
         self.rubbish_pan_img = readimg('img/rubbish/pan.png')
-
+        self.rubbish_can_img = readimg('img/rubbish/can.png')
         self.background_imgs = []
 
     def reLo(self, location):
@@ -584,7 +584,8 @@ class Image_yecai(object):
                        self.rubbish_pot_img,
                        self.rubbish_tyre_img,
                        self.rubbish_paomian_img,
-                       self.rubbish_pan_img
+                       self.rubbish_pan_img,
+                       self.rubbish_can_img
                        ]
         ret = []
         background = self.shoot(*self.backgroundLocation)
