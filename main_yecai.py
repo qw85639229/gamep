@@ -179,7 +179,8 @@ class AntYecai(object):
     def medicine(self, keys=[('F3', 10)]):
         for key, timeTake in keys:
             if self.medicine_count % timeTake == 0:
-                self.action.press(key,timeTake=0.5)
+                self.action.press(key)
+                time.sleep(0.5)
                 location = self.image.checkNotice()
                 self.action.click(location)
         self.medicine_count += 1
@@ -189,7 +190,9 @@ class AntYecai(object):
     def hunt(self):
         ret = self.image.checkMonster()
         if ret != None:
-            self.action.click(ret,right=False)
+                self.action.move(ret, timeTake=0.05)
+                if self.image.checkMouse(ret) == 1:
+                    self.action.click(ret,right=False)
 
 
     def dig(self):
