@@ -1,9 +1,11 @@
 # -*-encoding:utf-8-*-
 import win32gui
+import win32con
 import time
 import threading as th
 from action_yecai import Action_yecai
 from image_yecai import Image_yecai
+import os
 ifDebug = True
 
 def print_dug(words):
@@ -12,15 +14,21 @@ def print_dug(words):
 
 
 class AntYecai(object):
-    def __init__(self, name= 'AntYecai', test=False):
+    def __init__(self, name= 'AntYecai', programPath='D:\\daily data\\AntYecaibuluo\\AntYecai.exe', test=False):
         print(time.strftime("%H_%M", time.localtime()), ": Start the program of AntYecai")
-        hwnd = win32gui.FindWindow(None, name)
-        left, top, right, bottom = win32gui.GetWindowRect(hwnd)
-        print(f'Find location: left:{left}, top:{top}, right:{right}, bottom:{bottom}')
-        self.windowLeftUp = (left,top)
+        self.name = name
+        self.mode = None
+        self.programPath = programPath
         self.lock_verify = th.Lock()
-        self.action = Action_yecai(self.windowLeftUp, self.lock_verify)
-        self.image = Image_yecai(self.windowLeftUp)
+        hwnd = win32gui.FindWindow(None, name)
+        if hwnd != 0:
+            left, top, right, bottom = win32gui.GetWindowRect(hwnd)
+            print(f'Find location: left:{left}, top:{top}, right:{right}, bottom:{bottom}')
+            self.windowLeftUp = (left,top)
+            self.action = Action_yecai(self.windowLeftUp, self.lock_verify)
+            self.image = Image_yecai(self.windowLeftUp)
+        else:
+            self.startProgram()
         self.verify_siuation = [": No verification",
                                 ": Bastketball Check",
                                 ": Enter a num",
@@ -34,7 +42,6 @@ class AntYecai(object):
             th.Thread(target=self.signalFunction, args=(), name='key_capture_thread', daemon=True).start()
 
         """Application Thread"""
-        self.lock_app = th.Lock()
         #verification
         if not test:
             self.verfiy_th = th.Thread(target=self.verifing)
@@ -53,8 +60,57 @@ class AntYecai(object):
         self.dig_count = 0
         self.dig_type = 0
 
+    def startProgram(self):
+        hwnd = win32gui.FindWindow(None, self.name)
+        if hwnd != 0:
+            return
+        os.startfile(self.programPath)
+        time.sleep(2)
+        hwnd = win32gui.FindWindow(None, self.name)
+        win32gui.BringWindowToTop(hwnd)
+        win32gui.SetForegroundWindow(hwnd)
+        win32gui.ShowWindow(hwnd, win32con.SW_SHOW)
+        time.sleep(2)
+        left, top, right, bottom = win32gui.GetWindowRect(hwnd)
+        self.windowLeftUp = (left, top)
+        self.action = Action_yecai(self.windowLeftUp, self.lock_verify)
+        self.image = Image_yecai(self.windowLeftUp)
+        self.enterVillage()
+
+    def enterVillage(self):
+        self.action.click(self.action.startLocation, timeTake=1, iflock=False)
+        self.action.click(self.action.pwenterLocation, timeTake=1, iflock=False)
+        self.action.click(self.action.pwenterLocation2, timeTake=1, iflock=False)
+        self.action.click(self.action.skipLocation, timeTake=1, iflock=False)
+        self.action.reset(iflock=False)
+        if self.mode != None:
+            self.enterWorkArea(self.mode)
+
+    def enterWorkArea(self, mode):
+        while(self.image.checkBackGround() != 0):
+            print_dug("Try to enter the start background")
+            for i in range(2):
+                time.sleep(0.1)
+                if i == 0:
+                    self.verify()
+                img = [self.image.area_room_img, self.image.area_exit_img][i]
+            # for img in [self.image.area_room_img, self.image.area_exit_img]:
+            #     if img == self.image.area_room_img:
+            #         self.verify()
+                ret = self.image.checkImage(img)
+                if ret != None:
+                    self.action.click(ret, timeTake=1, iflock=False)
+                    break
+        if mode == 5:
+            self.action.click(self.action.newTownLocation, timeTake=1, iflock=False)
+            ret = self.image.checkNotice()
+            if ret != None:
+                self.action.click(ret, timeTake=1, iflock=False)
+
+
     def verify(self):
         self.action.reset(iflock=False)
+        self.startProgram()
         situation, data = self.image.verify()
         if situation != 0:
             print(time.strftime("%H:%M:%S", time.localtime()), self.verify_siuation[situation])
@@ -295,6 +351,10 @@ class AntYecai(object):
                 time.sleep(timeTake)
 
     def start(self, mode= 0):
+        self.mode = mode
+        self.lock_verify.acquire()
+        self.enterWorkArea(mode)
+        self.lock_verify.release()
         workmode = [
             [(self.fishflag, 30), (self.fish, 0)],
             [(self.hunt, 0.5), (self.transfer, 20)],
@@ -316,11 +376,10 @@ class AntYecai(object):
 
 if __name__ == '__main__':
     print('*' * 20)
-    time.sleep(2)
+    # time.sleep(2)
     program = AntYecai(test=False)
     program.mouseLocation()
-    # program.start(5)
-    # program.action.leaveSnow2(program.lock_verify)
+    program.start(5)
     print(
         """
     Work Mode:

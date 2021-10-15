@@ -63,6 +63,8 @@ class Image_yecai(object):
         self.area_hunt_img = readimg('img/area/area_hunt.png')
         self.area_hometown_img = readimg('img/area/area_hometown.png')
         self.area_room_img = readimg('img/area/area_room.png')
+        self.area_exit_img = readimg('img/area/exit.png')
+        self.area_fish_img = readimg('img/area/fish.png')
         self.area_circle_img = readimg('img/area/circle.png')
         self.area_caomei_img = readimg('img/area/caomei.png')
         self.area_notice = readimg('img/area/notice.png')
@@ -586,6 +588,13 @@ class Image_yecai(object):
             ret = aircv.find_all_template(img, self.area_enter, threshold=0.9)
             if len(ret) > 0:
                 return tuple(map(int, ret[0]['result']))
+        return None
+
+    def checkImage(self, name):
+        img = self.shoot(*self.backgroundLocation)
+        ret = aircv.find_all_template(img, name, threshold=0.9)
+        if len(ret) > 0:
+            return tuple(map(int, ret[0]['result']))
         return None
 
 if __name__ == "__main__":

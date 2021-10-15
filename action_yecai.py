@@ -12,6 +12,11 @@ class Action_yecai(object):
         self.timeTake = 6
         self.snowTimeTake = 3
         """Location"""
+        self.startLocation = (654, 396)
+        self.pwenterLocation = (620,493)
+        self.pwenterLocation2 = (656,485)
+        self.skipLocation = (1081, 110)
+
         self.buttonLocation = (244, 159)
         self.rightArrowRight = (757,449)
 
@@ -26,6 +31,9 @@ class Action_yecai(object):
         self.stripEndDrag = (786, 450)
         self.roomPassWordLocation = (646 , 387)
         self.roomPassWordEnterLocation = (583 , 472)
+
+        self.homeTownLocation = (308 , 469)
+        self.newTownLocation = (655, 468)
     def reLo(self, location):
         return (location[0] + self.windowLeftUp[0], location[1] + self.windowLeftUp[1])
 
