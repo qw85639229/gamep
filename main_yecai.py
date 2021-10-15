@@ -14,7 +14,7 @@ def print_dug(words):
 
 
 class AntYecai(object):
-    def __init__(self, name= 'AntYecai', programPath='D:\\daily data\\AntYecaibuluo\\AntYecai.exe', test=False):
+    def __init__(self, name= 'AntYecai', programPath='E:\\game\\AntYecaibuluo\\AntYecai.exe', test=False):
         print(time.strftime("%H_%M", time.localtime()), ": Start the program of AntYecai")
         self.name = name
         self.mode = None
@@ -352,9 +352,10 @@ class AntYecai(object):
 
     def start(self, mode= 0):
         self.mode = mode
-        self.lock_verify.acquire()
-        self.enterWorkArea(mode)
-        self.lock_verify.release()
+        if mode == 5:
+            self.lock_verify.acquire()
+            self.enterWorkArea(mode)
+            self.lock_verify.release()
         workmode = [
             [(self.fishflag, 30), (self.fish, 0)],
             [(self.hunt, 0.5), (self.transfer, 20)],
@@ -376,7 +377,7 @@ class AntYecai(object):
 
 if __name__ == '__main__':
     print('*' * 20)
-    # time.sleep(2)
+    time.sleep(2)
     program = AntYecai(test=False)
     program.mouseLocation()
     program.start(5)
@@ -384,7 +385,7 @@ if __name__ == '__main__':
         """
     Work Mode:
     0: Fish
-    1: Hunting
+    1: Huntingd
     2: Diging
     3: Eating with hunting
     4: Earning

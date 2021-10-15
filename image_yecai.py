@@ -292,7 +292,7 @@ class Image_yecai(object):
         return (max_han_word, enterLocation, blankLocation)
 
     def rightArrow(self, img=None, rightArrowLocation=(0,0), detect=True):
-
+        test = True
         if detect:
             rightArrowLocation = tuple([int(x) for x in rightArrowLocation])
             rightArrowLocation = self.reLo(
@@ -307,21 +307,35 @@ class Image_yecai(object):
             div = np.abs(div)
             div = np.array(div, np.uint8)
             div = cv2.cvtColor(div, cv2.COLOR_BGR2GRAY)
+            if test:
+                cv2.imwrite('div.png',div)
+
             ret, div = cv2.threshold(div, 0, 255, type=cv2.THRESH_BINARY)
             contours, hierarchy = cv2.findContours(div, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             ret = None
+
+            # test
+
+            if test:
+                test_img = self.preRightArrow.copy()
+
+
             for contour in contours:
                 x, y, w, h = cv2.boundingRect(contour)
                 if not 40 * 40 <= w * h <= 70 * 70 or not abs(w - h) <= 5:
                     continue
                 else:
                     ret = (x, y, w, h)
+                    if test:
+                        cv2.rectangle(test_img, (x,y), (x+w, y+h), (0,255,255), 4)
                     break
 
             if ret == None:
                 return (80 + self.verifyLeftUp[0] + self.windowLeftUp[0], rightArrowLocation[1])
 
             strip_img = self.preRightArrow[ret[1]:ret[1]+ret[3], :, :]
+            if test:
+                cv2.imwrite('strip.png',strip_img)
             strip_img = cv2.cvtColor(strip_img, cv2.COLOR_BGR2GRAY)
             strip_img = np.array(strip_img,dtype=np.float)
 
@@ -329,16 +343,11 @@ class Image_yecai(object):
             strip_value = np.mean(strip_img, axis=0)
             for i in range(30, strip_img.shape[0] - 30):
                 strip_value[i] = sum(strip_value[i-20:i+20]) / 40
-            # import matplotlib.pyplot as plt
-            # x = [i for i in range(strip_value.shape[0])]
-            # y = [strip_value[i] for i in range(strip_value.shape[0])]
-            # plt.plot(x,y,color='red',linewidth=2.0)
-            # plt.show()
-            # input()
-            # exit()
             max_count = 0
             max_index = 0
-            threshold = sum(strip_value) / (strip_value.shape[0])
+            # threshold = sum(strip_value) / (strip_value.shape[0])
+            threshold = strip_value[strip_value.argsort()[int(1/6 * strip_value.shape[0])]]
+            print(f'rightArrow threshold: {threshold}')
             count = 0
             next_y = []
             for i in range(strip_value.shape[0]):
@@ -350,9 +359,20 @@ class Image_yecai(object):
                 else:
                     count = 0
                 next_y.append(count)
-            # plt.plot(x, next_y, color='green', linewidth=2.0)
-            # plt.plot()
+
             print(f'rightArrow: {max_index}/{max_count}')
+
+            # test
+            if test:
+                line_img = np.ones(test_img.shape,dtype=np.uint8) * 255
+                for x in range(test_img.shape[1]):
+                    line_img[int(strip_value[x]), x, :] = [0,0,255]
+                    line_img[next_y[x], x, :] = [0,255,255]
+                cv2.imwrite('line_img.png',line_img)
+                cv2.circle(test_img, (max_index - max_count // 2, self.rightArrowLocation[1] - self.windowLeftUp[1] - self.verifyLeftUp[1]), 10, (0,255,255), 10)
+                cv2.imwrite('test.png', test_img)
+
+
             return (max_index - max_count // 2 + self.verifyLeftUp[0] + self.windowLeftUp[0], self.rightArrowLocation[1])
 
 

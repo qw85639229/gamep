@@ -10,7 +10,7 @@ class Action_yecai(object):
         pyautogui.FAILSAFE = True
         self.lock = lock
         self.timeTake = 6
-        self.snowTimeTake = 3
+        self.snowTimeTake = 2
         """Location"""
         self.startLocation = (654, 396)
         self.pwenterLocation = (620,493)
@@ -111,12 +111,12 @@ class Action_yecai(object):
         rightArrowLocation = data
         pyautogui.moveTo(*rightArrowLocation)
         pyautogui.mouseDown(x=rightArrowLocation[0], y=rightArrowLocation[1], button='left')
-        pyautogui.moveTo(*self.reLo(self.rightArrowRight),duration=0.2)
+        pyautogui.moveTo(*self.reLo(self.rightArrowRight),duration=0.4)
         return
 
     def rightArrow(self,data):
         print(f'move to ({data[0]}, {data[1]})')
-        pyautogui.mouseUp(x=data[0], y=data[1], button='left', duration=0.2)
+        pyautogui.mouseUp(x=data[0], y=data[1], button='left', duration=0.4)
         # rightArrowLocation, targetLocation = data
         # pyautogui.moveTo(*rightArrowLocation)
         # time.sleep(0.2)
