@@ -510,16 +510,16 @@ class Image_yecai(object):
 
     def checkMouse(self, location):
         img = self.shoot(location[0]-5, location[1]-5, 30, 30 )
-        ret = aircv.find_all_template(img, self.food_hand_img, threshold=0.6)
+        ret = aircv.find_all_template(img, self.food_hand_img, threshold=0.9)
         if len(ret) > 0:
             return 0
-        ret = aircv.find_all_template(img, self.monster_hand_img, threshold=0.6)
+        ret = aircv.find_all_template(img, self.monster_hand_img, threshold=0.9)
         if len(ret) > 0:
             return 1
-        ret = aircv.find_all_template(img, self.rubbish_hand_img, threshold=0.6)
+        ret = aircv.find_all_template(img, self.rubbish_hand_img, threshold=0.9)
         if len(ret) > 0:
             return 2
-        ret = aircv.find_all_template(img, self.forbin_hand_img, threshold=0.6)
+        ret = aircv.find_all_template(img, self.forbin_hand_img, threshold=0.9)
         if len(ret) > 0:
             return 3
         return -1
