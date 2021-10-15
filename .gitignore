@@ -1,5 +1,4 @@
 /build/
 /dist/
-/img/
 *.spec
-./*.png
+
