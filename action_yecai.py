@@ -10,7 +10,7 @@ class Action_yecai(object):
         pyautogui.FAILSAFE = True
         self.lock = lock
         self.timeTake = 6
-        self.snowTimeTake = 2
+        self.snowTimeTake = 1.5
         """Location"""
         self.startLocation = (654, 396)
         self.pwenterLocation = (620,493)

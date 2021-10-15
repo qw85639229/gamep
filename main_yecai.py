@@ -271,7 +271,7 @@ class AntYecai(object):
             self.action.click(self.action.quitLocation)
             self.room_count += 1
 
-    def findGetFoodRubbish(self, food=True, rubbish=True, timeTake=3):
+    def findGetFoodRubbish(self, food=True, rubbish=True, timeTake=2):
         food_rubbish_locations = self.image.checkFoodRubbish(food=food, rubbish=rubbish)
         for location in food_rubbish_locations:
             self.action.move(location, 0.05)
@@ -378,9 +378,9 @@ class AntYecai(object):
 if __name__ == '__main__':
     print('*' * 20)
     time.sleep(2)
-    program = AntYecai(test=False)
-    program.mouseLocation()
-    program.start(5)
+    # program = AntYecai(test=False)
+    # program.mouseLocation()
+    # program.start(5)
     print(
         """
     Work Mode:
@@ -398,26 +398,26 @@ if __name__ == '__main__':
 
 
     # rubbish
-    # program = AntYecai(test=False)
-    # program.mouseLocation()
-    # rubbishMan = (576, 283)
-    # rubbishUp = (734, 376)
-    # rubbishExchange = (574, 470)
-    # rubbishStop = [(467, 444),(569, 449),(683, 444)]
+    program = AntYecai(test=False)
+    program.mouseLocation()
+    rubbishMan = (576, 283)
+    rubbishUp = (734, 376)
+    rubbishExchange = (574, 470)
+    rubbishStop = [(467, 444),(569, 449),(683, 444)]
     #click rubbish man
-    # while True:
-    #     program.action.click(rubbishMan)
-    #     #click rubbish up
-    #     for i in range(3):
-    #         program.action.click(rubbishUp)
-    #         time.sleep(0.05)
-    #     #exchange
-    #     program.action.click(rubbishExchange)
-    #     time.sleep(0.1)
-    #     for i in range(3):
-    #         program.action.click(rubbishStop[i])
-    #         time.sleep(0.2)
-    #     time.sleep(8)
+    while True:
+        program.action.click(rubbishMan)
+        #click rubbish up
+        for i in range(3):
+            program.action.click(rubbishUp)
+            time.sleep(0.05)
+        #exchange
+        program.action.click(rubbishExchange)
+        time.sleep(0.1)
+        for i in range(3):
+            program.action.click(rubbishStop[i])
+            time.sleep(0.2)
+        time.sleep(8)
 
     #test
     # import numpy as np
