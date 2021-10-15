@@ -107,6 +107,23 @@ class AntYecai(object):
             ret = self.image.checkNotice()
             if ret != None:
                 self.action.click(ret, timeTake=1, iflock=False)
+        elif mode == 1:
+            self.action.click(self.action.huntLocation, timeTake=1, iflock=False)
+            ret = self.image.checkNotice()
+            if ret != None:
+                self.action.click(ret, timeTake=1, iflock=False)
+            circles = self.image.checkRoomCircle()
+
+            for circle in circles:
+                print(circle)
+                self.action.click(circle, iflock=False)
+                self.action.reset(iflock=False)
+                time.sleep(0.8)
+                roomtype = self.image.checkBackGround()
+                if roomtype == 4:
+                    return
+
+
 
 
     def verify(self):
@@ -182,7 +199,8 @@ class AntYecai(object):
                 self.action.press(key)
                 time.sleep(0.5)
                 location = self.image.checkNotice()
-                self.action.click(location)
+                if location != None:
+                    self.action.click(location)
         self.medicine_count += 1
         if self.medicine_count >= 100:
             self.medicine_count = 0
@@ -190,9 +208,9 @@ class AntYecai(object):
     def hunt(self):
         ret = self.image.checkMonster()
         if ret != None:
-                self.action.move(ret, timeTake=0.05)
-                if self.image.checkMouse(ret) == 1:
-                    self.action.click(ret,right=False)
+            self.action.move(ret, timeTake=0.05)
+            if self.image.checkMouse(ret) == 1:
+                self.action.click(ret,right=False)
 
 
     def dig(self):
@@ -364,9 +382,9 @@ class AntYecai(object):
             if timeTake > 0:
                 time.sleep(timeTake)
 
-    def start(self, mode= 0):
+    def start(self, mode= 0, ewa=False):
         self.mode = mode
-        if mode == 5:
+        if (mode == 5 or mode == 1) and ewa:
             self.lock_verify.acquire()
             self.enterWorkArea(mode)
             self.lock_verify.release()
@@ -394,7 +412,7 @@ if __name__ == '__main__':
     time.sleep(2)
     program = AntYecai(test=False)
     program.mouseLocation()
-    program.start(1)
+    program.start(1,ewa=False)
     print(
         """
     Work Mode:

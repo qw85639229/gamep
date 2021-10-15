@@ -34,6 +34,7 @@ class Action_yecai(object):
 
         self.homeTownLocation = (308 , 469)
         self.newTownLocation = (655, 468)
+        self.huntLocation = (253 , 181)
     def reLo(self, location):
         return (location[0] + self.windowLeftUp[0], location[1] + self.windowLeftUp[1])
 
