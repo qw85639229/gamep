@@ -292,7 +292,7 @@ class Image_yecai(object):
         return (max_han_word, enterLocation, blankLocation)
 
     def rightArrow(self, img=None, rightArrowLocation=(0,0), detect=True):
-        test = True
+        test = False
         if detect:
             rightArrowLocation = tuple([int(x) for x in rightArrowLocation])
             rightArrowLocation = self.reLo(
