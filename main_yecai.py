@@ -56,6 +56,7 @@ class AntYecai(object):
         #earn
         self.room_count = 0
         #hunting
+        self.medicine_count = 0
         #dig
         self.dig_count = 0
         self.dig_type = 0
@@ -174,6 +175,16 @@ class AntYecai(object):
         hp = self.image.checkHP()
         if hp > 0.8:
             self.action.press(key)
+
+    def medicine(self, keys=[('F3', 10)]):
+        for key, timeTake in keys:
+            if self.medicine_count % timeTake == 0:
+                self.action.press(key)
+                location = self.image.checkNotice()
+                self.action.click(location)
+        self.medicine_count += 1
+        if self.medicine_count >= 100:
+            self.medicine_count = 0
 
     def hunt(self):
         ret = self.image.checkMonster()
@@ -358,7 +369,7 @@ class AntYecai(object):
             self.lock_verify.release()
         workmode = [
             [(self.fishflag, 30), (self.fish, 0)],
-            [(self.hunt, 0.5), (self.transfer, 20)],
+            [(self.hunt, 0.5), (self.transfer, 20), (self.medicine, 60)],
             [(self.dig, 4)],
             [(self.eat, 0)],
             [(self.earn, 0)],
@@ -378,14 +389,14 @@ class AntYecai(object):
 if __name__ == '__main__':
     print('*' * 20)
     time.sleep(2)
-    # program = AntYecai(test=False)
-    # program.mouseLocation()
-    # program.start(5)
+    program = AntYecai(test=False)
+    program.mouseLocation()
+    program.start(1)
     print(
         """
     Work Mode:
     0: Fish
-    1: Huntingd
+    1: Hunting
     2: Diging
     3: Eating with hunting
     4: Earning
@@ -398,26 +409,26 @@ if __name__ == '__main__':
 
 
     # rubbish
-    program = AntYecai(test=False)
-    program.mouseLocation()
-    rubbishMan = (576, 283)
-    rubbishUp = (734, 376)
-    rubbishExchange = (574, 470)
-    rubbishStop = [(467, 444),(569, 449),(683, 444)]
-    #click rubbish man
-    while True:
-        program.action.click(rubbishMan)
-        #click rubbish up
-        for i in range(3):
-            program.action.click(rubbishUp)
-            time.sleep(0.05)
-        #exchange
-        program.action.click(rubbishExchange)
-        time.sleep(0.1)
-        for i in range(3):
-            program.action.click(rubbishStop[i])
-            time.sleep(0.2)
-        time.sleep(8)
+    # program = AntYecai(test=False)
+    # program.mouseLocation()
+    # rubbishMan = (576, 283)
+    # rubbishUp = (734, 376)
+    # rubbishExchange = (574, 470)
+    # rubbishStop = [(467, 444),(569, 449),(683, 444)]
+    # #click rubbish man
+    # while True:
+    #     program.action.click(rubbishMan)
+    #     #click rubbish up
+    #     for i in range(3):
+    #         program.action.click(rubbishUp)
+    #         time.sleep(0.05)
+    #     #exchange
+    #     program.action.click(rubbishExchange)
+    #     time.sleep(0.1)
+    #     for i in range(3):
+    #         program.action.click(rubbishStop[i])
+    #         time.sleep(0.2)
+    #     time.sleep(8)
 
     #test
     # import numpy as np
