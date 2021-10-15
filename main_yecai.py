@@ -129,6 +129,10 @@ class AntYecai(object):
     def verify(self):
         self.action.reset(iflock=False)
         self.startProgram()
+        ret = self.image.checkNotice()
+        if ret != None:
+            self.action.click(ret, iflock=False)
+        self.action.reset(iflock=False)
         situation, data = self.image.verify()
         if situation != 0:
             print(time.strftime("%H:%M:%S", time.localtime()), self.verify_siuation[situation])
@@ -197,7 +201,7 @@ class AntYecai(object):
         for key, timeTake in keys:
             if self.medicine_count % timeTake == 0:
                 self.action.press(key)
-                time.sleep(0.5)
+                time.sleep(0.1)
                 location = self.image.checkNotice()
                 if location != None:
                     self.action.click(location)
@@ -214,6 +218,7 @@ class AntYecai(object):
 
 
     def dig(self):
+        # print('what dig ', self.image.checkHP())
         if self.image.checkHP() >= 0.2:
             self.action.dig(self.dig_type)
             self.dig_count += 1
@@ -232,6 +237,7 @@ class AntYecai(object):
     def eat(self):
         self.div = self.checkdiv()
         if self.div != None:
+            food = []
             monster = []
             rubbish = []
             for x,y,w,h in self.div:
@@ -240,8 +246,9 @@ class AntYecai(object):
                 self.action.move((middle_x, middle_y), 0.05)
                 type_hand = self.image.checkMouse((middle_x, middle_y)) #0->food 1->monster 2->big rubbish
                 if type_hand == 0:
-                    self.action.click((middle_x, middle_y))
-                    time.sleep(10)
+                    food.append((middle_x,middle_y))
+                    # self.action.click((middle_x, middle_y))
+                    # time.sleep(10)
                     # return
                 if type_hand == 1:
                     monster.append((middle_x,middle_y))
@@ -250,13 +257,18 @@ class AntYecai(object):
                 elif type_hand == 3:
                     self.forbinpoint.append((x,y,w,h))
             if len(monster) > 0:
-                self.action.click(monster[0], right=True)
+                self.action.click(monster[0], right=False)
+                time.sleep(2)
                 return
 
             if len(rubbish) > 0:
-                self.action.click(rubbish[0],right=True)
+                self.action.click(rubbish[0],right=False)
+                time.sleep(2)
                 return
-
+            if len(food) > 0:
+                self.action.click(food[0],right=False)
+                time.sleep(5)
+                return
     def earn(self):
         roomtype = self.image.checkBackGround() # 0->start 1->new 2->hunt 3->hometown 4->room
         print('what',roomtype)
@@ -390,9 +402,9 @@ class AntYecai(object):
             self.lock_verify.release()
         workmode = [
             [(self.fishflag, 30), (self.fish, 0)],
-            [(self.hunt, 0.5), (self.transfer, 20), (self.medicine, 60)],
+            [(self.hunt, 2), (self.transfer, 20), (self.medicine, 60)],
             [(self.dig, 4)],
-            [(self.eat, 0)],
+            [(self.eat, 0),(self.transfer, 20)],
             [(self.earn, 0)],
             [(self.earnSnowNorth, 0)]][mode]
 
@@ -412,7 +424,7 @@ if __name__ == '__main__':
     time.sleep(2)
     program = AntYecai(test=False)
     program.mouseLocation()
-    program.start(1,ewa=False)
+    program.start(5,ewa=True)
     print(
         """
     Work Mode:
