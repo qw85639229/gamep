@@ -179,7 +179,7 @@ class AntYecai(object):
     def medicine(self, keys=[('F3', 10)]):
         for key, timeTake in keys:
             if self.medicine_count % timeTake == 0:
-                self.action.press(key)
+                self.action.press(key,timeTake=0.5)
                 location = self.image.checkNotice()
                 self.action.click(location)
         self.medicine_count += 1
