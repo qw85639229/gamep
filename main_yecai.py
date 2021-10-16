@@ -234,7 +234,7 @@ class AntYecai(object):
         divret = self.image.div(6)
         return divret
 
-    def eat(self):
+    def eat(self, foodFirst=True):
         self.div = self.checkdiv()
         if self.div != None:
             food = []
@@ -247,9 +247,10 @@ class AntYecai(object):
                 type_hand = self.image.checkMouse((middle_x, middle_y)) #0->food 1->monster 2->big rubbish
                 if type_hand == 0:
                     food.append((middle_x,middle_y))
-                    # self.action.click((middle_x, middle_y))
-                    # time.sleep(10)
-                    # return
+                    if foodFirst:
+                        self.action.click((middle_x, middle_y))
+                        time.sleep(15)
+                        return
                 if type_hand == 1:
                     monster.append((middle_x,middle_y))
                 elif type_hand == 2:
