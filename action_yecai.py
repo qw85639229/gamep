@@ -177,6 +177,41 @@ class Action_yecai(object):
         self.lock.release()
         # time.sleep(self.timeTake)
 
+    def bubblewrap(self):
+        """
+        bubblewrap has 10 * 9 bubbles
+        :return:
+        """
+        bubbleLeftUp = self.reLo((482 , 236))
+        bubbleRightDown = self.reLo((818, 615))
+        nextbubbleX = self.reLo((524 , 236))
+        nextbubbleY = self.reLo((482 , 281))
+        cell_w = nextbubbleX[0] - bubbleLeftUp[0]
+        cell_h = nextbubbleY[1] - bubbleLeftUp[1]
+
+        self.move(bubbleLeftUp, relo=False)
+        pyautogui.mouseDown(x=bubbleLeftUp[0], y=bubbleLeftUp[1], button='left')
+        startLocation = bubbleLeftUp
+        endLocation = bubbleRightDown
+        for i in range(4):
+            """Down"""
+            self.move((startLocation[0],endLocation[1]), duration=0.5, timeTake=0, relo=False)
+            """Right"""
+            self.move((endLocation[0], endLocation[1]), duration=0.4, timeTake=0, relo=False)
+            """Up"""
+            self.move((endLocation[0], startLocation[1]), duration=0.5, timeTake=0, relo=False)
+            """Left"""
+            self.move((startLocation[0] + cell_w, startLocation[1]), duration=0.6, timeTake=0.1, relo=False)
+            """Reset"""
+            startLocation = (startLocation[0] + cell_w, startLocation[1] + cell_h)
+            endLocation = (endLocation[0] - cell_w, endLocation[1] - cell_h)
+            self.move(startLocation,duration=0.1, timeTake=0, relo=False)
+        endLocation = (bubbleLeftUp[0] + 4 * cell_w,bubbleLeftUp[1] + 5 * cell_h)
+        self.move(endLocation, duration=0.4, relo=False)
+        pyautogui.mouseUp(x=endLocation[0], y=endLocation[1], button='left')
+        # pyautogui.moveTo(*self.reLo(self.rightArrowRight), duration=0.4)
+
+
     def click(self, location, timeTake=0.05, right=False, relo=True, iflock=True):
         if relo:
             location = self.reLo(location)
@@ -199,11 +234,11 @@ class Action_yecai(object):
         if iflock:
             self.lock.release()
 
-    def move(self, location, timeTake=0.2, relo=True, iflock=True):
+    def move(self, location, timeTake=0.2, duration=0., relo=True, iflock=True):
         if iflock:
             self.lock.acquire()
         location = self.reLo(location) if relo else location
-        pyautogui.moveTo(location)
+        pyautogui.moveTo(location,duration=duration)
         time.sleep(timeTake)
         if iflock:
             self.lock.release()

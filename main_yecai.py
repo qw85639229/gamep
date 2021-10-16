@@ -424,7 +424,8 @@ if __name__ == '__main__':
     time.sleep(2)
     program = AntYecai(test=False)
     program.mouseLocation()
-    program.start(5,ewa=True)
+
+    program.start(1,ewa=True)
     print(
         """
     Work Mode:
@@ -437,8 +438,6 @@ if __name__ == '__main__':
     """
     )
     # program.start(2)
-
-
 
 
     # rubbish
@@ -462,6 +461,15 @@ if __name__ == '__main__':
     #         program.action.click(rubbishStop[i])
     #         time.sleep(0.2)
     #     time.sleep(8)
+
+    #bubble wrap
+    # while True:
+    #     time.sleep(0.5)
+    #     program.action.press('F9')
+    #     time.sleep(0.5)
+    #     program.action.bubblewrap()
+    #     time.sleep(0.5)
+    #     program.action.click(program.action.pwenterLocation2)
 
     #test
     # import numpy as np
