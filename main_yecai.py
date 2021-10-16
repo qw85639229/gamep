@@ -121,7 +121,7 @@ class AntYecai(object):
                 roomtype = self.image.checkBackGround()
                 if roomtype == 4:
                     return
-        elif mode == 3: # Eating with hunting
+        elif mode == 3 or mode == 0: # Eating with hunting && fishing
             self.action.click(self.action.homeTownLocation, timeTake=1, iflock=False)
             ret = self.image.checkNotice()
             if ret != None:
@@ -416,7 +416,7 @@ class AntYecai(object):
 
     def start(self, mode= 0, ewa=False):
         self.mode = mode
-        if mode in [5,3,1] and ewa:
+        if mode in [5,3,1,0] and ewa:
             self.lock_verify.acquire()
             self.enterWorkArea(mode)
             self.lock_verify.release()
