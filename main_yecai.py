@@ -100,20 +100,33 @@ class AntYecai(object):
             #         self.verify()
                 ret = self.image.checkImage(img)
                 if ret != None:
-                    self.action.click(ret, timeTake=1, iflock=False)
+                    self.action.click(ret[0], timeTake=1, iflock=False)
                     break
-        if mode == 5:
+        if mode == 5: # Earn Snow with North
             self.action.click(self.action.newTownLocation, timeTake=1, iflock=False)
             ret = self.image.checkNotice()
             if ret != None:
                 self.action.click(ret, timeTake=1, iflock=False)
-        elif mode == 1:
+        elif mode == 1: # Hunting
             self.action.click(self.action.huntLocation, timeTake=1, iflock=False)
             ret = self.image.checkNotice()
             if ret != None:
                 self.action.click(ret, timeTake=1, iflock=False)
             circles = self.image.checkRoomCircle()
-
+            for circle in circles:
+                print(circle)
+                self.action.click(circle, iflock=False)
+                self.action.reset(iflock=False)
+                time.sleep(0.8)
+                roomtype = self.image.checkBackGround()
+                if roomtype == 4:
+                    return
+        elif mode == 3: # Eating with hunting
+            self.action.click(self.action.homeTownLocation, timeTake=1, iflock=False)
+            ret = self.image.checkNotice()
+            if ret != None:
+                self.action.click(ret, timeTake=1, iflock=False)
+            circles = self.image.checkImage(self.image.area_fish_img)
             for circle in circles:
                 print(circle)
                 self.action.click(circle, iflock=False)
@@ -123,8 +136,15 @@ class AntYecai(object):
                 if roomtype == 4:
                     return
 
-
-
+    """
+        Work Mode:
+        0: Fish
+        1: Hunting
+        2: Diging
+        3: Eating with hunting
+        4: Earning
+        5: Earn Snow with North
+        """
 
     def verify(self):
         self.action.reset(iflock=False)
@@ -396,7 +416,7 @@ class AntYecai(object):
 
     def start(self, mode= 0, ewa=False):
         self.mode = mode
-        if (mode == 5 or mode == 1) and ewa:
+        if mode in [5,3,1] and ewa:
             self.lock_verify.acquire()
             self.enterWorkArea(mode)
             self.lock_verify.release()

@@ -615,7 +615,10 @@ class Image_yecai(object):
         img = self.shoot(*self.backgroundLocation)
         ret = aircv.find_all_template(img, name, threshold=0.9)
         if len(ret) > 0:
-            return tuple(map(int, ret[0]['result']))
+            ans = []
+            for i in range(len(ret)):
+                ans.append(tuple(map(int, ret[i]['result'])))
+            return ans
         return None
 
 if __name__ == "__main__":
