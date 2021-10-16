@@ -516,7 +516,7 @@ class Image_yecai(object):
         ret = aircv.find_all_template(img, self.monster_hand_img, threshold=0.9)
         if len(ret) > 0:
             return 1
-        ret = aircv.find_all_template(img, self.rubbish_hand_img, threshold=0.9)
+        ret = aircv.find_all_template(img, self.rubbish_hand_img, threshold=0.8)
         if len(ret) > 0:
             return 2
         ret = aircv.find_all_template(img, self.forbin_hand_img, threshold=0.9)
