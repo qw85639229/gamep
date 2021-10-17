@@ -20,7 +20,7 @@ class AntYecai(object):
         self.mode = None
         self.programPath = programPath
         self.allDayWork = [5, 0, 3]
-        self.allDayWork = [(5, 60 * 60 * 5), (0, 60 * 60 * 2.5), (2, 60 * 60 * 1), (3, -1)]
+        self.allDayWork = [(5, 60 * 60 * 5), (0, 60 * 60 * 2.5), (2, 60 * 60 * 2), (3, -1)]
         self.lock_verify = th.Lock()
         hwnd = win32gui.FindWindow(None, name)
         if hwnd != 0:
@@ -453,18 +453,33 @@ class AntYecai(object):
             thread.start()
 
     def allDay(self):
+        restTime = 60 * 60 * 24
         for work, timeTake in self.allDayWork:
             self.stopSignal = False
             print(f"Start work {self.allDayWork[0]}")
             self.start(work, ewa=True)
             if timeTake > 0:
+                restTime = restTime - timeTake
                 time.sleep(timeTake)
-                self.stopSignal = True
-                print(f"Start to stop work {self.allDayWork[0]}")
-                for i in self.thread:
-                    i.join()
-            print('finish')
+            else:
+                time.sleep(restTime)
+            self.stopSignal = True
+            print(f"Start to stop work {self.allDayWork[0]}")
+            for i in self.thread:
+                i.join()
+        print('finish')
 
+    def deamon(self):
+        curday = time.localtime().tm_mday
+        print("Deamon start at ", curday)
+        while(time.localtime().tm_mday == curday):
+            time.sleep(60 * 20)
+        self.stopSignal = True
+        print(f"Start to stop Tmpwork {self.allDayWork[0]}")
+        for i in self.thread:
+            i.join()
+        while True:
+            self.allDay()
 
 
 if __name__ == '__main__':
@@ -473,8 +488,8 @@ if __name__ == '__main__':
     program = AntYecai(test=False)
     program.mouseLocation()
     # program.allDay()
-
-    # program.start(1,ewa=True)
+    program.start(1,ewa=False)
+    program.deamon()
     # print(
     #     """
     # Work Mode:

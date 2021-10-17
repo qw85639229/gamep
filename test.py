@@ -6,15 +6,16 @@ import os
 import time
 import numpy as np
 
+a = time.localtime().tm_mday
+print(a)
 
-def test_th(arg=None):
-    time.sleep(5)
+def deamon():
+    cur_time = time.localtime().tm_min
+    print("Program start at ", cur_time)
+    while(time.localtime().tm_min <= cur_time):
+        print('wait for 10 second')
+        time.sleep(10)
 
-thread_container = []
-for i in range(5):
-    thread_container.append(th.Thread(target=test_th, name=str(i)))
+    print("Program end at", time.localtime().tm_min)
 
-print(th.active_count())
-for thread in thread_container:
-    thread.start()
-print(th.active_count())
+deamon()
