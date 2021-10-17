@@ -6,7 +6,7 @@ import threading as th
 from action_yecai import Action_yecai
 from image_yecai import Image_yecai
 import os
-ifDebug = True
+ifDebug = False
 
 def print_dug(words):
     if ifDebug == True:
@@ -19,6 +19,8 @@ class AntYecai(object):
         self.name = name
         self.mode = None
         self.programPath = programPath
+        self.allDayWork = [5, 0, 3]
+        self.allDayWork = [(5, 60 * 60 * 4), (0, 60 * 60 * 2.5), (3, -1)]
         self.lock_verify = th.Lock()
         hwnd = win32gui.FindWindow(None, name)
         if hwnd != 0:
@@ -174,14 +176,13 @@ class AntYecai(object):
                         if not self.image.verify()[0] == 1:
                             break
         elif situation == 4:
-
             data = self.image.rightArrow(detect=False)
             self.action.rightArrow(data)
         return False
 
     def verifing(self, timeTake = 10):
         print("Verify Thread Start with timeTake = ", timeTake)
-        while not self.stopSignal:
+        while True:
             self.lock_verify.acquire()
             self.verify()
             self.lock_verify.release()
@@ -416,6 +417,7 @@ class AntYecai(object):
 
     def start(self, mode= 0, ewa=False):
         self.mode = mode
+        self.thread = []
         if mode in [5,3,1,0] and ewa:
             self.lock_verify.acquire()
             self.enterWorkArea(mode)
@@ -437,6 +439,19 @@ class AntYecai(object):
         for thread in self.thread:
             thread.start()
 
+    def allDay(self):
+        for work, timeTake in self.allDayWork:
+            self.stopSignal = False
+            print(f"Start work {self.allDayWork[0]}")
+            self.start(work, ewa=True)
+            if timeTake > 0:
+                time.sleep(timeTake)
+                self.stopSignal = True
+                print(f"Start to stop work {self.allDayWork[0]}")
+                for i in self.thread:
+                    i.join()
+            print('finish')
+
 
 
 if __name__ == '__main__':
@@ -444,19 +459,20 @@ if __name__ == '__main__':
     time.sleep(2)
     program = AntYecai(test=False)
     program.mouseLocation()
+    # program.allDay()
 
-    program.start(3,ewa=True)
-    print(
-        """
-    Work Mode:
-    0: Fish
-    1: Hunting
-    2: Diging
-    3: Eating with hunting
-    4: Earning
-    5: Earn Snow with North
-    """
-    )
+    program.start(5,ewa=True)
+    # print(
+    #     """
+    # Work Mode:
+    # 0: Fish
+    # 1: Hunting
+    # 2: Diging
+    # 3: Eating with hunting
+    # 4: Earning
+    # 5: Earn Snow with North
+    # """
+    # )
     # program.start(2)
 
 

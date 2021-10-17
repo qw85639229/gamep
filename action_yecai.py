@@ -117,7 +117,7 @@ class Action_yecai(object):
 
     def rightArrow(self,data):
         print(f'move to ({data[0]}, {data[1]})')
-        pyautogui.mouseUp(x=data[0], y=data[1], button='left', duration=0.4)
+        pyautogui.mouseUp(x=data[0], y=data[1], button='left', duration=0.6)
         # rightArrowLocation, targetLocation = data
         # pyautogui.moveTo(*rightArrowLocation)
         # time.sleep(0.2)
