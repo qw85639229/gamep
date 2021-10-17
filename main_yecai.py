@@ -232,11 +232,13 @@ class AntYecai(object):
     def medicine(self, keys=[('F3', 10)]):
         for key, timeTake in keys:
             if self.medicine_count % timeTake == 0:
-                self.action.press(key)
+                self.lock_verify.acquire()
+                self.action.press(key,iflock=False)
                 time.sleep(0.1)
                 location = self.image.checkNotice()
                 if location != None:
-                    self.action.click(location)
+                    self.action.click(location,iflock=False)
+                self.lock_verify.release()
         self.medicine_count += 1
         if self.medicine_count >= 100:
             self.medicine_count = 0
@@ -472,7 +474,7 @@ if __name__ == '__main__':
     program.mouseLocation()
     # program.allDay()
 
-    program.start(1,ewa=True)
+    # program.start(1,ewa=True)
     # print(
     #     """
     # Work Mode:
