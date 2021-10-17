@@ -137,6 +137,17 @@ class AntYecai(object):
                 roomtype = self.image.checkBackGround()
                 if roomtype == 4:
                     return
+        elif mode == 2: # Diging
+            self.action.click(self.action.homeTownLocation, timeTake=1, iflock=False)
+            ret = self.image.checkNotice()
+            if ret != None:
+                self.action.click(ret, timeTake=1, iflock=False)
+            self.action.CreatMineRoom()
+            time.sleep(2)
+            roomtype = self.image.checkBackGround()
+            if roomtype != 4:
+                return
+            self.action.enterMineWorkRoom()
 
     """
         Work Mode:
@@ -418,7 +429,7 @@ class AntYecai(object):
     def start(self, mode= 0, ewa=False):
         self.mode = mode
         self.thread = []
-        if mode in [5,3,1,0] and ewa:
+        if mode in [5,3,1,2, 0] and ewa:
             self.lock_verify.acquire()
             self.enterWorkArea(mode)
             self.lock_verify.release()
@@ -456,12 +467,12 @@ class AntYecai(object):
 
 if __name__ == '__main__':
     print('*' * 20)
-    time.sleep(2)
-    program = AntYecai(test=False)
+    # time.sleep(2)
+    program = AntYecai(test=True)
     program.mouseLocation()
     # program.allDay()
 
-    program.start(5,ewa=True)
+    program.start(2,ewa=True)
     # print(
     #     """
     # Work Mode:

@@ -35,6 +35,14 @@ class Action_yecai(object):
         self.homeTownLocation = (308 , 469)
         self.newTownLocation = (655, 468)
         self.huntLocation = (253 , 181)
+
+        self.createRoom = (725 , 77)
+        self.createPrivateButtion = (635 , 238)
+        self.createPrivatePW = (779 , 236)
+        self.createButtion = (915 , 203)
+        self.dragMap = [(969 , 351), (969 , 459)]
+        self.mineMap = (419 , 547)
+
     def reLo(self, location):
         return (location[0] + self.windowLeftUp[0], location[1] + self.windowLeftUp[1])
 
@@ -301,6 +309,25 @@ class Action_yecai(object):
         function = [self.leaveSnow1,self.leaveSnow2,self.leaveSnow3,self.leaveSnow4,][num]
         function()
 
+    def CreatMineRoom(self, pw='110119'):
+        self.click(self.createRoom, timeTake=1, iflock=False)
+        self.click(self.createPrivateButtion, timeTake=1, iflock=False)
+        self.click(self.createPrivatePW, timeTake=1, iflock=False)
+        pyautogui.typewrite(message=pw,interval=0.2)
+        self.move(self.dragMap[0], iflock=False)
+        pyautogui.dragTo(self.reLo(self.dragMap[1]), duration=0.5)
+
+        self.click(self.mineMap, timeTake=1, iflock=False)
+        self.click(self.createButtion, timeTake=1, iflock=False)
+        return
+
+    def enterMineWorkRoom(self, timeTake=4):
+        location1 = (1100 , 519)
+        location2 = (689 , 147)
+        location3 = (219 , 277)
+        for i in [location1, location2, location3]:
+            self.click(i, iflock=False)
+            time.sleep(timeTake)
 
     def reset(self, iflock=True):
         if iflock:
