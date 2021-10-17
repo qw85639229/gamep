@@ -114,15 +114,14 @@ class AntYecai(object):
             ret = self.image.checkNotice()
             if ret != None:
                 self.action.click(ret, timeTake=1, iflock=False)
-            circles = self.image.checkRoomCircle()
-            for circle in circles:
-                print(circle)
-                self.action.click(circle, iflock=False)
-                self.action.reset(iflock=False)
-                time.sleep(0.8)
-                roomtype = self.image.checkBackGround()
-                if roomtype == 4:
-                    return
+            self.action.CreatHuntRoom()
+            time.sleep(2)
+            roomtype = self.image.checkBackGround()
+            if roomtype != 4:
+                return
+            self.verify()
+            self.action.enterHuntWorkRoom()
+
         elif mode == 3 or mode == 0: # Eating with hunting && fishing
             self.action.click(self.action.homeTownLocation, timeTake=1, iflock=False)
             ret = self.image.checkNotice()
@@ -430,7 +429,7 @@ class AntYecai(object):
     def start(self, mode= 0, ewa=False):
         self.mode = mode
         self.thread = []
-        if mode in [5,3,1,2, 0] and ewa:
+        if mode in [0,1,2,3,5] and ewa:
             self.lock_verify.acquire()
             self.enterWorkArea(mode)
             self.lock_verify.release()
@@ -471,9 +470,9 @@ if __name__ == '__main__':
     # time.sleep(2)
     program = AntYecai(test=False)
     program.mouseLocation()
-    program.allDay()
+    # program.allDay()
 
-    # program.start(2,ewa=True)
+    program.start(1,ewa=True)
     # print(
     #     """
     # Work Mode:
