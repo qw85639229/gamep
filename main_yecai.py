@@ -20,7 +20,7 @@ class AntYecai(object):
         self.mode = None
         self.programPath = programPath
         self.allDayWork = [5, 0, 3]
-        self.allDayWork = [(5, 60 * 60 * 4), (0, 60 * 60 * 2.5), (3, -1)]
+        self.allDayWork = [(5, 60 * 60 * 5), (0, 60 * 60 * 2.5), (2, 60 * 60 * 1), (3, -1)]
         self.lock_verify = th.Lock()
         hwnd = win32gui.FindWindow(None, name)
         if hwnd != 0:
@@ -147,6 +147,7 @@ class AntYecai(object):
             roomtype = self.image.checkBackGround()
             if roomtype != 4:
                 return
+            self.verify()
             self.action.enterMineWorkRoom()
 
     """
@@ -468,11 +469,11 @@ class AntYecai(object):
 if __name__ == '__main__':
     print('*' * 20)
     # time.sleep(2)
-    program = AntYecai(test=True)
+    program = AntYecai(test=False)
     program.mouseLocation()
-    # program.allDay()
+    program.allDay()
 
-    program.start(2,ewa=True)
+    # program.start(2,ewa=True)
     # print(
     #     """
     # Work Mode:
