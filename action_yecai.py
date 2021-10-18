@@ -20,6 +20,7 @@ class Action_yecai(object):
         self.buttonLocation = (244, 159)
         self.rightArrowRight = (757,449)
         self.blankHan = (606 , 421)
+        self.blankMath = (603, 411)
 
         self.leftLocation = (443 , 353)
         self.rightLocation = (869 , 353)

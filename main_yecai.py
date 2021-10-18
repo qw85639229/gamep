@@ -185,11 +185,18 @@ class AntYecai(object):
                         self.action.reset(iflock=False)
                         if not self.image.verify()[0] == 1:
                             break
+        elif situation == 2:
+            self.action.reset(iflock=False)
+            time.sleep(2)
+            ret = self.image.checkImage(self.image.enter_img)
+            if ret != None:
+                self.action.click(self.action.blankMath, iflock=False)
+                self.action.press('backspace', iflock=False)
         elif situation == 3:
             self.action.reset(iflock=False)
+            time.sleep(2)
             if self.image.verify()[0] == 3:
                 self.action.click(self.action.blankHan,iflock=False)
-                self.action.press('backspace',iflock=False)
                 self.action.press('backspace',iflock=False)
         elif situation == 4:
             data = self.image.rightArrow(detect=False)
