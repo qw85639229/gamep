@@ -437,7 +437,7 @@ class AntYecai(object):
             self.lock_verify.release()
         workmode = [
             [(self.fishflag, 30), (self.fish, 0)],
-            [(self.hunt, 2), (self.transfer, 20), (self.medicine, 60)],
+            [(self.hunt, 20), (self.transfer, 20), (self.medicine, 60)],
             [(self.dig, 4)],
             [(self.eat, 0),(self.transfer, 20)],
             [(self.earn, 0)],
@@ -484,11 +484,11 @@ class AntYecai(object):
 
 if __name__ == '__main__':
     print('*' * 20)
-    # time.sleep(2)
+    time.sleep(2)
     program = AntYecai(test=False)
     program.mouseLocation()
     # program.allDay()
-    program.start(1,ewa=False)
+    program.start(1,ewa=True)
     program.deamon()
     # print(
     #     """

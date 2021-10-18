@@ -177,7 +177,7 @@ class Image_yecai(object):
         ret = []
         for contour in contours:
             x, y, w, h = cv2.boundingRect(contour)
-            if w * h <= 400 or w * h >= 60 * 60:
+            if w * h <= 400 or w * h >= 80 * 80:
                 continue
             # cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
             ret.append((x, y, w, h))
