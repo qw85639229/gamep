@@ -19,6 +19,7 @@ class Action_yecai(object):
 
         self.buttonLocation = (244, 159)
         self.rightArrowRight = (757,449)
+        self.blankHan = (606 , 421)
 
         self.leftLocation = (443 , 353)
         self.rightLocation = (869 , 353)
@@ -96,8 +97,8 @@ class Action_yecai(object):
         return
 
     def wordHan(self, data):
-        max_han_word, enterLocation, blankLocation = data
-        pyautogui.moveTo(*blankLocation)
+        max_han_word, enterLocation = data
+        pyautogui.moveTo(*self.reLo(self.blankHan))
         time.sleep(0.2)
         pyautogui.click()
         time.sleep(0.2)

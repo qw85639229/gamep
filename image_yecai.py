@@ -48,6 +48,7 @@ class Image_yecai(object):
         self.enter_img = readimg('img/verify/enter.png')
         self.blank_img = readimg('img/verify/blank.png')
         self.blank_han_img = readimg('img/verify/blank_han.png')
+        self.han_img = readimg('img/verify/han.png')
         self.right_arrow_img = readimg('img/verify/rightarrow.png')
         self.situation4_black_img = readimg('img/verify/situation4_black.png')
         #hand
@@ -136,12 +137,12 @@ class Image_yecai(object):
             return 2, (max_math_num, enterLocation, blankLocation)
 
         """3: Enter A Word Sim Han"""
-        ret2 = aircv.find_all_template(img, self.blank_han_img)
+        ret2 = aircv.find_all_template(img, self.han_img)
         if len(ret) > 0 and len(ret2) > 0:
-            (max_han_word, enterLocation, blankLocation) = self.wordHan(ret[0]['result'], ret2[0]['result'])
+            (max_han_word, enterLocation) = self.wordHan(ret[0]['result'])
             if max_han_word == -1:
                 return 0, None
-            return 3, (max_han_word, enterLocation, blankLocation)
+            return 3, (max_han_word, enterLocation)
 
         """4: Right Arrow"""
         ret = aircv.find_all_template(img, self.right_arrow_img)
@@ -263,13 +264,13 @@ class Image_yecai(object):
         # exit()
         return (max_math_num, enterLocation, blankLocation)
 
-    def wordHan(self, enterLocation, blankLocation):
+    def wordHan(self, enterLocation):
         enterLocation = tuple([int(x) for x in enterLocation])
-        blankLocation = tuple([int(x) for x in blankLocation])
+        # blankLocation = tuple([int(x) for x in blankLocation])
         enterLocation = self.reLo(
             (enterLocation[0] + self.verifyLeftUp[0], enterLocation[1] + self.verifyLeftUp[1]))
-        blankLocation = self.reLo(
-            (blankLocation[0] + self.verifyLeftUp[0], blankLocation[1] + self.verifyLeftUp[1]))
+        # blankLocation = self.reLo(
+        #     (blankLocation[0] + self.verifyLeftUp[0], blankLocation[1] + self.verifyLeftUp[1]))
 
         han_dict = collections.defaultdict(int)
         max_han_count = 0
@@ -289,7 +290,7 @@ class Image_yecai(object):
                             max_han_word = j
             except:
                 pass
-        return (max_han_word, enterLocation, blankLocation)
+        return (max_han_word, enterLocation)
 
     def rightArrow(self, img=None, rightArrowLocation=(0,0), detect=True):
         test = True

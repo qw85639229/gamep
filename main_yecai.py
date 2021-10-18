@@ -19,7 +19,6 @@ class AntYecai(object):
         self.name = name
         self.mode = None
         self.programPath = programPath
-        self.allDayWork = [5, 0, 3]
         self.allDayWork = [(5, 60 * 60 * 5), (0, 60 * 60 * 2.5), (2, 60 * 60 * 2), (3, -1)]
         self.lock_verify = th.Lock()
         hwnd = win32gui.FindWindow(None, name)
@@ -186,6 +185,12 @@ class AntYecai(object):
                         self.action.reset(iflock=False)
                         if not self.image.verify()[0] == 1:
                             break
+        elif situation == 3:
+            self.action.reset(iflock=False)
+            if self.image.verify()[0] == 3:
+                self.action.click(self.action.blankHan,iflock=False)
+                self.action.press('backspace',iflock=False)
+                self.action.press('backspace',iflock=False)
         elif situation == 4:
             data = self.image.rightArrow(detect=False)
             self.action.rightArrow(data)
@@ -484,12 +489,12 @@ class AntYecai(object):
 
 if __name__ == '__main__':
     print('*' * 20)
-    time.sleep(2)
+    # time.sleep(2)
     program = AntYecai(test=False)
     program.mouseLocation()
     # program.allDay()
-    program.start(1,ewa=True)
-    program.deamon()
+    # program.start(1,ewa=True)
+    # program.deamon()
     # print(
     #     """
     # Work Mode:
