@@ -2,7 +2,7 @@
 import pyautogui
 import time
 import pyperclip
-
+import random
 class Action_yecai(object):
     def __init__(self, windowLeftUp, lock):
         self.windowLeftUp = windowLeftUp
@@ -10,7 +10,7 @@ class Action_yecai(object):
         pyautogui.FAILSAFE = True
         self.lock = lock
         self.timeTake = 6
-        self.snowTimeTake = 1.5
+        self.snowTimeTake = 1
         """Location"""
         self.startLocation = (654, 396)
         self.pwenterLocation = (620,493)
@@ -45,6 +45,7 @@ class Action_yecai(object):
         self.dragMap = [(969 , 351), (969 , 459)]
         self.mineMap = (419 , 547)
         self.huntMap = (410 , 410)
+        self.fishMap = (416 , 549)
 
     def reLo(self, location):
         return (location[0] + self.windowLeftUp[0], location[1] + self.windowLeftUp[1])
@@ -236,6 +237,7 @@ class Action_yecai(object):
         else:
             pyautogui.click()
         time.sleep(timeTake)
+        time.sleep(random.randint(0,5)/10)
         if iflock:
             self.lock.release()
 
@@ -345,6 +347,17 @@ class Action_yecai(object):
         self.click(self.createButtion, timeTake=1, iflock=False)
         return
 
+    def CreatFishRoom(self, pw='110119'):
+        self.click(self.createRoom, timeTake=1, iflock=False)
+        self.click(self.createPrivateButtion, timeTake=1, iflock=False)
+        self.click(self.createPrivatePW, timeTake=1, iflock=False)
+        pyautogui.typewrite(message=pw,interval=0.2)
+        # self.move(self.dragMap[0], iflock=False)
+        # pyautogui.dragTo(self.reLo(self.dragMap[1]), duration=0.5)
+
+        self.click(self.fishMap, timeTake=1, iflock=False)
+        self.click(self.createButtion, timeTake=1, iflock=False)
+        return
     def enterHuntWorkRoom(self, timeTake=4):
         location1 = (1067 , 653)
         for i in range(5):

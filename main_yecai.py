@@ -19,7 +19,7 @@ class AntYecai(object):
         self.name = name
         self.mode = None
         self.programPath = programPath
-        self.allDayWork = [(5, 60 * 60 * 5), (0, 60 * 60 * 2.5), (2, 60 * 60 * 2), (3, -1)]
+        self.allDayWork = [(5, 3), (0, 1.5), (2, 2), (3, -1)]
         self.lock_verify = th.Lock()
         hwnd = win32gui.FindWindow(None, name)
         if hwnd != 0:
@@ -66,6 +66,7 @@ class AntYecai(object):
         hwnd = win32gui.FindWindow(None, self.name)
         if hwnd != 0:
             return
+        print(time.strftime("%H:%M:%S", time.localtime()), 'Start the program')
         os.startfile(self.programPath)
         time.sleep(2)
         hwnd = win32gui.FindWindow(None, self.name)
@@ -126,15 +127,16 @@ class AntYecai(object):
             ret = self.image.checkNotice()
             if ret != None:
                 self.action.click(ret, timeTake=1, iflock=False)
-            circles = self.image.checkImage(self.image.area_fish_img)
-            for circle in circles:
-                print(circle)
-                self.action.click(circle, iflock=False)
-                self.action.reset(iflock=False)
-                time.sleep(0.8)
-                roomtype = self.image.checkBackGround()
-                if roomtype == 4:
-                    return
+            self.action.CreatFishRoom()
+            # circles = self.image.checkImage(self.image.area_fish_img)
+            # for circle in circles:
+            #     print(circle)
+            #     self.action.click(circle, iflock=False)
+            #     self.action.reset(iflock=False)
+            #     time.sleep(0.8)
+            #     roomtype = self.image.checkBackGround()
+            #     if roomtype == 4:
+            #         return
         elif mode == 2: # Diging
             self.action.click(self.action.homeTownLocation, timeTake=1, iflock=False)
             ret = self.image.checkNotice()
@@ -238,7 +240,7 @@ class AntYecai(object):
 
     def transfer(self, key='F2'):
         hp = self.image.checkHP()
-        if hp > 0.8:
+        if hp > 0.5:
             self.action.press(key)
 
     def medicine(self, keys=[('F3', 10)]):
@@ -262,13 +264,20 @@ class AntYecai(object):
             if self.image.checkMouse(ret) == 1:
                 self.action.click(ret,right=False)
 
-
+    def skill(self):
+        if self.image.checkHP() >= 0.2:
+            ret = self.image.checkMonster()
+            if ret != None:
+                self.action.move(ret, timeTake=0.05)
+                if self.image.checkMouse(ret) == 1:
+                    self.action.click(ret, right=True)
+                    self.hunt()
     def dig(self):
         # print('what dig ', self.image.checkHP())
         if self.image.checkHP() >= 0.2:
             self.action.dig(self.dig_type)
             self.dig_count += 1
-            if self.dig_count >= 6:
+            if self.dig_count >= 3:
                 self.dig_count = 0
                 self.dig_type += 1
             if self.dig_type >= 4:
@@ -355,13 +364,13 @@ class AntYecai(object):
                     # print("Error with hand type: ", handtype)
                     continue
                 self.action.click(location)
-                time.sleep(2)
+                time.sleep(4)
             print('Finish collecting and quit the room')
             #quit the room
             self.action.click(self.action.quitLocation)
             self.room_count += 1
 
-    def findGetFoodRubbish(self, food=True, rubbish=True, timeTake=2):
+    def findGetFoodRubbish(self, food=True, rubbish=True, timeTake=1):
         food_rubbish_locations = self.image.checkFoodRubbish(food=food, rubbish=rubbish)
         for location in food_rubbish_locations:
             self.action.move(location, 0.05)
@@ -449,8 +458,10 @@ class AntYecai(object):
             self.lock_verify.release()
         workmode = [
             [(self.fishflag, 30), (self.fish, 0)],
-            [(self.hunt, 20), (self.transfer, 20), (self.medicine, 60)],
-            [(self.dig, 4)],
+            [(self.hunt, 10), (self.transfer, 50), (self.skill, 10.5)], #(self.medicine, 60)],
+            # [(self.hunt, 10), (self.transfer, 50)], #(self.medicine, 60)],
+            # [(self.transfer, 50), (self.skill, 1)], #(self.medicine, 60)],
+            [(self.dig, 3)],
             [(self.eat, 0),(self.transfer, 20)],
             [(self.earn, 0)],
             [(self.earnSnowNorth, 0)]][mode]
@@ -464,19 +475,21 @@ class AntYecai(object):
         for thread in self.thread:
             thread.start()
 
-    def allDay(self):
-        restTime = 60 * 60 * 24
-        for work, timeTake in self.allDayWork:
+    def allDay(self, works = None):
+        if works == None:
+            works = self.allDayWork
+        restTime = 24
+        for work, timeTake in works:
             self.stopSignal = False
-            print(f"Start work {self.allDayWork[0]}")
+            print(f"Start work {work}")
             self.start(work, ewa=True)
             if timeTake > 0:
                 restTime = restTime - timeTake
-                time.sleep(timeTake)
+                time.sleep(timeTake * 60 * 60)
             else:
-                time.sleep(restTime)
+                time.sleep(restTime * 60 * 60)
             self.stopSignal = True
-            print(f"Start to stop work {self.allDayWork[0]}")
+            print(f"Start to stop work {work}")
             for i in self.thread:
                 i.join()
         print('finish')
@@ -496,12 +509,15 @@ class AntYecai(object):
 
 if __name__ == '__main__':
     print('*' * 20)
-    # time.sleep(2)
+    time.sleep(2)
     program = AntYecai(test=False)
     program.mouseLocation()
-    # program.allDay()
-    # program.start(1,ewa=True)
-    # program.deamon()
+    # works = [(5, 5), (0, 2.5), (2, 2), (3, -1)]
+    works = [(2, 2), (3, -1)]
+    # works = [(2, 1), (3, -1)]
+    program.allDay(works)
+    # program.start(0,ewa=True)
+    program.deamon()
     # print(
     #     """
     # Work Mode:
